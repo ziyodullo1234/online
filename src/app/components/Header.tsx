@@ -11,7 +11,7 @@ export function Header() {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <BookOpen className="w-8 h-8 text-blue-600" />
-          <span className="text-2xl font-bold">Ziyodullo_erkinov</span>
+          <span className="text-2xl font-bold">Erkinov</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
