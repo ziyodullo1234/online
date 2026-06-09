@@ -20,12 +20,14 @@ import {
   Globe,
   CheckCircle,
   Clock,
+  Menu,
+  X,
 } from 'lucide-react';
 
 /* ─── Floating badge component ─────────────────────────────────────── */
 function FloatingBadge({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`floating-badge absolute bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 ${className}`}>
+    <div className={`floating-badge absolute bg-white rounded-2xl shadow-2xl p-3 flex items-center gap-2 ${className}`}>
       {children}
     </div>
   );
@@ -40,12 +42,12 @@ function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
       if (!entry.isIntersecting) return;
       observer.disconnect();
       let start = 0;
-      const step = target / 60;
+      const step = target / 50;
       const timer = setInterval(() => {
         start += step;
         if (start >= target) { setCount(target); clearInterval(timer); }
         else setCount(Math.floor(start));
-      }, 16);
+      }, 20);
     });
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -57,6 +59,7 @@ function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
 export function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [mounted, setMounted] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 50);
@@ -115,7 +118,6 @@ export function Home() {
     }
   };
 
-  // Hech qanday navigatsiya qilmaydigan funksiya
   const handleCardClick = () => {
     return;
   };
@@ -138,7 +140,7 @@ export function Home() {
           --border:  rgba(255,255,255,0.08);
           min-height: 100vh;
           background: #F8FAFC;
-          font-family: 'Inter', system-ui, sans-serif;
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
         /* ── Hero ── */
@@ -151,16 +153,54 @@ export function Home() {
         .hero-inner {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 100px 24px 140px;
+          padding: 80px 20px 100px;
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 48px;
+          gap: 32px;
           align-items: center;
         }
-        @media(max-width:768px){
-          .hero-inner { grid-template-columns:1fr; padding:72px 20px 100px; }
-          .hero-visual { display:none; }
+        
+        /* Mobile hero styles */
+        @media(max-width: 768px) {
+          .hero-inner { 
+            grid-template-columns: 1fr; 
+            padding: 60px 16px 80px;
+            gap: 40px;
+          }
+          .hero-visual { 
+            display: block;
+            min-height: 380px;
+          }
+          .hero-title {
+            font-size: clamp(28px, 8vw, 44px) !important;
+            line-height: 1.2 !important;
+          }
+          .hero-sub {
+            font-size: 16px !important;
+            line-height: 1.5 !important;
+          }
+          .hero-cta {
+            flex-direction: column;
+            gap: 12px !important;
+          }
+          .hero-cta .btn-primary,
+          .hero-cta .btn-ghost {
+            width: 100%;
+            justify-content: center;
+            padding: 14px 20px !important;
+          }
+          .hero-benefits {
+            margin-top: 24px !important;
+          }
+          .benefit-item {
+            font-size: 13px !important;
+          }
         }
+
+        @media(max-width: 480px) {
+          .hero-inner { padding: 50px 16px 70px; }
+        }
+
         .hero-eyebrow {
           display: inline-flex;
           align-items: center;
@@ -168,20 +208,28 @@ export function Home() {
           background: rgba(245,158,11,0.12);
           border: 1px solid rgba(245,158,11,0.3);
           border-radius: 999px;
-          padding: 6px 16px;
+          padding: 6px 14px;
           color: var(--gold);
-          font-size: 13px;
+          font-size: 12px;
           font-weight: 600;
           letter-spacing: 0.05em;
           text-transform: uppercase;
-          margin-bottom: 24px;
+          margin-bottom: 20px;
         }
+        
+        @media(max-width: 768px) {
+          .hero-eyebrow {
+            font-size: 11px;
+            padding: 5px 12px;
+          }
+        }
+        
         .hero-title {
-          font-size: clamp(2.4rem, 5vw, 4rem);
+          font-size: clamp(2rem, 5vw, 4rem);
           font-weight: 800;
           line-height: 1.1;
           color: var(--text);
-          margin: 0 0 20px;
+          margin: 0 0 16px;
           letter-spacing: -0.02em;
         }
         .hero-title .accent {
@@ -192,9 +240,9 @@ export function Home() {
         }
         .hero-sub {
           color: var(--muted);
-          font-size: 1.1rem;
-          line-height: 1.7;
-          margin-bottom: 36px;
+          font-size: 1rem;
+          line-height: 1.6;
+          margin-bottom: 28px;
           max-width: 480px;
         }
         .hero-cta {
@@ -207,8 +255,8 @@ export function Home() {
           color: #fff;
           border: none;
           border-radius: 12px;
-          padding: 14px 28px;
-          font-size: 15px;
+          padding: 12px 24px;
+          font-size: 14px;
           font-weight: 600;
           cursor: pointer;
           display: inline-flex;
@@ -220,7 +268,7 @@ export function Home() {
         }
         .btn-primary:hover {
           transform: translateY(-2px);
-          box-shadow: 0 8px 32px rgba(37,99,235,0.4);
+          box-shadow: 0 8px 24px rgba(37,99,235,0.3);
           background: #1D4ED8;
         }
         .btn-ghost {
@@ -228,8 +276,8 @@ export function Home() {
           color: var(--text);
           border: 1px solid var(--border);
           border-radius: 12px;
-          padding: 14px 24px;
-          font-size: 15px;
+          padding: 12px 20px;
+          font-size: 14px;
           font-weight: 500;
           cursor: pointer;
           display: inline-flex;
@@ -246,23 +294,62 @@ export function Home() {
         .hero-benefits {
           display: flex;
           flex-direction: column;
-          gap: 10px;
-          margin-top: 32px;
+          gap: 8px;
+          margin-top: 28px;
         }
         .benefit-item {
           display: flex;
           align-items: center;
           gap: 10px;
           color: var(--muted);
-          font-size: 14px;
+          font-size: 13px;
         }
-        .benefit-item svg { color: var(--mint); flex-shrink: 0; }
+        .benefit-item svg { 
+          color: var(--mint); 
+          flex-shrink: 0;
+          width: 14px;
+          height: 14px;
+        }
 
         /* ── Hero visual side ── */
         .hero-visual {
           position: relative;
-          height: 420px;
+          height: auto;
+          min-height: 380px;
         }
+        
+        @media(max-width: 768px) {
+          .hero-visual {
+            min-height: 340px;
+          }
+          .hero-card-main {
+            width: 85% !important;
+            max-width: 280px;
+            padding: 16px !important;
+          }
+          .floating-badge {
+            padding: 8px 12px !important;
+            font-size: 11px !important;
+          }
+          .floating-badge .badge-dot {
+            width: 28px !important;
+            height: 28px !important;
+          }
+          .floating-badge .badge-dot svg {
+            width: 14px !important;
+            height: 14px !important;
+          }
+          .badge-1 { top: 10px !important; right: -5px !important; }
+          .badge-2 { bottom: 20px !important; left: -10px !important; }
+        }
+        
+        @media(max-width: 480px) {
+          .hero-visual { min-height: 300px; }
+          .hero-card-main { width: 90% !important; padding: 14px !important; }
+          .badge-1 { top: 0 !important; right: -8px !important; }
+          .badge-2 { bottom: 10px !important; left: -15px !important; }
+        }
+        
         .hero-card-main {
           position: absolute;
           top: 50%;
@@ -271,8 +358,8 @@ export function Home() {
           background: var(--card-bg);
           border: 1px solid var(--border);
           border-radius: 20px;
-          padding: 24px;
-          width: 300px;
+          padding: 20px;
+          width: 280px;
           box-shadow: 0 40px 80px rgba(0,0,0,0.5);
         }
         .progress-bar-wrap {
@@ -292,27 +379,27 @@ export function Home() {
         .floating-badge {
           position: absolute;
           background: #fff;
-          border-radius: 14px;
-          padding: 12px 16px;
+          border-radius: 12px;
+          padding: 10px 14px;
           display: flex;
           align-items: center;
           gap: 10px;
-          box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+          box-shadow: 0 15px 40px rgba(0,0,0,0.2);
           animation: floatBob 3s ease-in-out infinite alternate;
           white-space: nowrap;
-          font-size: 13px;
+          font-size: 12px;
           font-weight: 600;
           color: #111;
         }
-        .floating-badge.badge-1 { top: 30px; right: -20px; animation-delay: 0s; }
-        .floating-badge.badge-2 { bottom: 40px; left: -30px; animation-delay: 1s; }
+        .floating-badge.badge-1 { top: 20px; right: -15px; animation-delay: 0s; }
+        .floating-badge.badge-2 { bottom: 30px; left: -25px; animation-delay: 1s; }
         @keyframes floatBob {
           from { transform: translateY(0px); }
-          to   { transform: translateY(-10px); }
+          to   { transform: translateY(-8px); }
         }
         .badge-dot {
-          width: 36px;
-          height: 36px;
+          width: 32px;
+          height: 32px;
           border-radius: 10px;
           display: flex;
           align-items: center;
@@ -327,16 +414,23 @@ export function Home() {
           filter: blur(80px);
           pointer-events: none;
         }
-        .orb-1 { width:500px;height:500px;background:rgba(37,99,235,0.18);top:-100px;right:-100px; }
-        .orb-2 { width:400px;height:400px;background:rgba(99,102,241,0.14);bottom:-100px;left:0; }
-        .orb-3 { width:300px;height:300px;background:rgba(245,158,11,0.1);top:50%;right:30%; }
+        .orb-1 { width:300px;height:300px;background:rgba(37,99,235,0.18);top:-100px;right:-100px; }
+        .orb-2 { width:250px;height:250px;background:rgba(99,102,241,0.14);bottom:-80px;left:-50px; }
+        .orb-3 { width:200px;height:200px;background:rgba(245,158,11,0.1);top:50%;right:20%; }
+        
+        @media(max-width: 768px) {
+          .orb-1 { width:200px;height:200px; }
+          .orb-2 { width:180px;height:180px; }
+          .orb-3 { width:150px;height:150px; }
+        }
+        
         .hero-grid-overlay {
           position: absolute;
           inset: 0;
           background-image:
             linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-          background-size: 48px 48px;
+          background-size: 40px 40px;
           mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
         }
         .hero-wave {
@@ -344,14 +438,33 @@ export function Home() {
           bottom: 0; left: 0; right: 0;
           line-height: 0;
         }
+        
+        @media(max-width: 768px) {
+          .hero-wave svg {
+            height: 30px !important;
+          }
+        }
 
         /* ── Categories ── */
         .section-cats {
           background: #fff;
-          padding: 80px 24px;
+          padding: 60px 16px;
         }
+        
+        @media(max-width: 768px) {
+          .section-cats {
+            padding: 40px 16px;
+          }
+          .section-title {
+            font-size: 24px !important;
+          }
+          .section-sub {
+            font-size: 14px !important;
+          }
+        }
+        
         .section-title {
-          font-size: 2rem;
+          font-size: 28px;
           font-weight: 800;
           color: #0F172A;
           letter-spacing: -0.02em;
@@ -359,29 +472,69 @@ export function Home() {
         }
         .section-sub {
           color: #64748B;
-          font-size: 1rem;
+          font-size: 14px;
           margin: 0;
         }
         .section-header {
           display: flex;
           justify-content: space-between;
           align-items: flex-end;
-          margin-bottom: 40px;
+          margin-bottom: 32px;
           flex-wrap: wrap;
-          gap: 16px;
+          gap: 12px;
         }
         .cats-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 16px;
+          gap: 12px;
           max-width: 1100px;
           margin: 0 auto;
         }
-        @media(max-width:768px){ .cats-grid { grid-template-columns:repeat(2,1fr); } }
+        
+        @media(max-width: 768px) {
+          .cats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+          }
+          .cat-card {
+            padding: 20px 12px !important;
+          }
+          .cat-icon-wrap {
+            width: 48px !important;
+            height: 48px !important;
+          }
+          .cat-icon-wrap svg {
+            width: 22px !important;
+            height: 22px !important;
+          }
+          .cat-name {
+            font-size: 13px !important;
+          }
+          .cat-desc {
+            font-size: 10px !important;
+          }
+        }
+        
+        @media(max-width: 480px) {
+          .cats-grid {
+            gap: 8px;
+          }
+          .cat-card {
+            padding: 16px 8px !important;
+          }
+          .cat-icon-wrap {
+            width: 44px !important;
+            height: 44px !important;
+          }
+          .cat-name {
+            font-size: 12px !important;
+          }
+        }
+        
         .cat-card {
           border: 2px solid transparent;
-          border-radius: 20px;
-          padding: 28px 20px;
+          border-radius: 16px;
+          padding: 24px 16px;
           text-align: center;
           cursor: pointer;
           transition: all .25s ease;
@@ -398,56 +551,119 @@ export function Home() {
           transition: opacity .25s;
         }
         .cat-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+          transform: translateY(-3px);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.08);
         }
         .cat-card.active {
           border-color: var(--active-color, var(--electric));
           background: var(--active-bg, #EFF6FF);
-          transform: translateY(-4px);
-          box-shadow: 0 12px 40px rgba(37,99,235,0.15);
+          transform: translateY(-3px);
+          box-shadow: 0 8px 24px rgba(37,99,235,0.12);
         }
         .cat-icon-wrap {
-          width: 64px;
-          height: 64px;
-          border-radius: 18px;
+          width: 56px;
+          height: 56px;
+          border-radius: 16px;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin: 0 auto 16px;
+          margin: 0 auto 12px;
           transition: transform .25s;
         }
         .cat-card:hover .cat-icon-wrap,
-        .cat-card.active .cat-icon-wrap { transform: scale(1.1) rotate(-3deg); }
+        .cat-card.active .cat-icon-wrap { transform: scale(1.05) rotate(-2deg); }
         .cat-name {
           font-weight: 700;
-          font-size: 15px;
+          font-size: 14px;
           color: #0F172A;
           margin: 0 0 4px;
         }
-        .cat-desc { font-size: 12px; color: #64748B; margin: 0; }
+        .cat-desc { 
+          font-size: 11px; 
+          color: #64748B; 
+          margin: 0;
+          line-height: 1.3;
+        }
 
         /* ── Course grid sections ── */
         .section-courses {
-          padding: 80px 24px;
+          padding: 0 16px 60px;
           max-width: 1200px;
           margin: 0 auto;
         }
+        
+        @media(max-width: 768px) {
+          .section-courses {
+            padding: 0 16px 40px;
+          }
+        }
+        
         .courses-grid {
           display: grid;
-          grid-template-columns: repeat(3,1fr);
-          gap: 24px;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
         }
-        @media(max-width:1024px){ .courses-grid { grid-template-columns:repeat(2,1fr); } }
-        @media(max-width:640px) { .courses-grid { grid-template-columns:1fr; } }
-
+        
+        @media(max-width: 1024px) {
+          .courses-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+          }
+        }
+        
+        @media(max-width: 640px) {
+          .courses-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+          }
+          .course-card-image {
+            height: 180px !important;
+          }
+          .card-content {
+            padding: 16px !important;
+          }
+          .course-title {
+            font-size: 16px !important;
+          }
+          .course-description {
+            font-size: 13px !important;
+          }
+        }
+        
         /* ── Stats ── */
         .section-stats {
           background: var(--navy);
-          padding: 100px 24px;
+          padding: 60px 16px;
           position: relative;
           overflow: hidden;
         }
+        
+        @media(max-width: 768px) {
+          .section-stats {
+            padding: 50px 16px;
+          }
+          .stats-headline h2 {
+            font-size: 24px !important;
+          }
+          .stats-headline p {
+            font-size: 14px !important;
+          }
+          .stat-card {
+            padding: 28px 20px !important;
+          }
+          .stat-value {
+            font-size: 2.5rem !important;
+          }
+          .stat-icon-wrap {
+            width: 50px !important;
+            height: 50px !important;
+          }
+          .stat-icon-wrap svg {
+            width: 24px !important;
+            height: 24px !important;
+          }
+        }
+        
         .stats-inner {
           max-width: 1100px;
           margin: 0 auto;
@@ -456,85 +672,129 @@ export function Home() {
         }
         .stats-headline {
           text-align: center;
-          margin-bottom: 60px;
+          margin-bottom: 48px;
         }
         .stats-headline h2 {
-          font-size: 2.4rem;
+          font-size: 32px;
           font-weight: 800;
           color: #fff;
           letter-spacing: -0.02em;
           margin: 0 0 12px;
         }
-        .stats-headline p { color: var(--muted); font-size: 1rem; margin: 0; }
+        .stats-headline p { color: var(--muted); font-size: 14px; margin: 0; }
         .stats-grid {
           display: grid;
-          grid-template-columns: repeat(3,1fr);
-          gap: 24px;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
         }
-        @media(max-width:768px){ .stats-grid { grid-template-columns:1fr; } }
+        
+        @media(max-width: 768px) {
+          .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+          }
+        }
+        
         .stat-card {
           background: var(--card-bg);
           border: 1px solid var(--border);
-          border-radius: 24px;
-          padding: 40px 32px;
+          border-radius: 20px;
+          padding: 32px 24px;
           text-align: center;
           transition: transform .25s, box-shadow .25s;
         }
         .stat-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+          transform: translateY(-4px);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
         .stat-icon-wrap {
-          width: 64px;
-          height: 64px;
-          border-radius: 18px;
+          width: 56px;
+          height: 56px;
+          border-radius: 16px;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin: 0 auto 24px;
+          margin: 0 auto 20px;
         }
         .stat-value {
-          font-size: 3.5rem;
+          font-size: 2.8rem;
           font-weight: 800;
           color: #fff;
           letter-spacing: -0.03em;
           line-height: 1;
           margin-bottom: 8px;
         }
-        .stat-label { color: var(--muted); font-size: 1rem; }
+        .stat-label { color: var(--muted); font-size: 14px; }
 
         /* ── CTA Banner ── */
         .section-cta {
           background: linear-gradient(135deg, #EFF6FF 0%, #F5F3FF 100%);
-          padding: 100px 24px;
+          padding: 60px 20px;
           text-align: center;
         }
-        .cta-inner { max-width: 640px; margin: 0 auto; }
+        
+        @media(max-width: 768px) {
+          .section-cta {
+            padding: 50px 20px;
+          }
+          .cta-inner h2 {
+            font-size: 24px !important;
+            line-height: 1.3 !important;
+          }
+          .cta-inner p {
+            font-size: 15px !important;
+            margin-bottom: 28px !important;
+          }
+          .cta-inner .btn-primary,
+          .cta-inner .btn-ghost {
+            width: 100%;
+            justify-content: center;
+          }
+        }
+        
+        .cta-inner { 
+          max-width: 640px; 
+          margin: 0 auto; 
+        }
         .cta-inner h2 {
-          font-size: 2.4rem;
+          font-size: 32px;
           font-weight: 800;
           color: #0F172A;
           letter-spacing: -0.02em;
           margin: 0 0 16px;
         }
-        .cta-inner p { color: #64748B; font-size: 1.1rem; margin: 0 0 36px; }
+        .cta-inner p { 
+          color: #64748B; 
+          font-size: 16px; 
+          margin: 0 0 32px; 
+        }
 
         /* ── Link-btn helpers ── */
-        a.btn-primary, a.btn-ghost { text-decoration: none; }
+        a.btn-primary, a.btn-ghost { 
+          text-decoration: none; 
+        }
 
         /* ── Card course hover lift ── */
         .course-lift {
           transition: transform .25s, box-shadow .25s;
+          cursor: default;
         }
         .course-lift:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+          transform: translateY(-4px);
+          box-shadow: 0 12px 32px rgba(0,0,0,0.1);
         }
+        
+        @media(max-width: 768px) {
+          .course-lift:hover {
+            transform: translateY(-2px);
+          }
+        }
+        
         .link-btn {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          font-size: 14px;
+          font-size: 13px;
           font-weight: 600;
           color: var(--electric);
           text-decoration: none;
@@ -544,6 +804,28 @@ export function Home() {
 
         /* ── Divider wave ── */
         .wave-divider svg { display:block; }
+        
+        /* Additional mobile optimizations */
+        @media(max-width: 480px) {
+          .badge-dot {
+            width: 28px !important;
+            height: 28px !important;
+          }
+          .hero-card-main div[style*="font-size: 14px"] {
+            font-size: 12px !important;
+          }
+        }
+        
+        /* Touch-friendly buttons */
+        @media (hover: none) and (pointer: coarse) {
+          .btn-primary, .btn-ghost, .cat-card {
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+          }
+          .btn-primary:active, .btn-ghost:active {
+            transform: scale(0.98);
+          }
+        }
       `}</style>
 
       <Header />
@@ -557,7 +839,7 @@ export function Home() {
 
         <div className="hero-inner">
           {/* LEFT */}
-          <div style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'none' : 'translateY(20px)', transition: 'opacity .8s ease, transform .8s ease' }}>
+          <div style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'none' : 'translateY(20px)', transition: 'opacity .6s ease, transform .6s ease' }}>
             <div className="hero-eyebrow">
               <Star size={12} fill="currentColor" />
               O'zbekistoning №1 online ta'lim platformasi
@@ -587,7 +869,7 @@ export function Home() {
             <div className="hero-benefits">
               {benefits.map(b => (
                 <div key={b} className="benefit-item">
-                  <CheckCircle size={15} />
+                  <CheckCircle size={14} />
                   <span>{b}</span>
                 </div>
               ))}
@@ -595,52 +877,52 @@ export function Home() {
           </div>
 
           {/* RIGHT — visual card */}
-          <div className="hero-visual" style={{ opacity: mounted ? 1 : 0, transition: 'opacity 1s ease 0.3s' }}>
+          <div className="hero-visual" style={{ opacity: mounted ? 1 : 0, transition: 'opacity 0.8s ease 0.3s' }}>
             <div className="hero-card-main">
-              <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
-                <div style={{ width:40, height:40, borderRadius:12, background:'linear-gradient(135deg,#2563EB,#38BDF8)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                  <Code size={20} color="#fff" />
+              <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:12 }}>
+                <div style={{ width:36, height:36, borderRadius:10, background:'linear-gradient(135deg,#2563EB,#38BDF8)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                  <Code size={18} color="#fff" />
                 </div>
                 <div>
-                  <div style={{ fontWeight:700, fontSize:14, color:'#F8FAFC' }}>React.js Kursi</div>
-                  <div style={{ fontSize:12, color:'#64748B' }}>12 ta dars • 4 soat</div>
+                  <div style={{ fontWeight:700, fontSize:13, color:'#F8FAFC' }}>React.js Kursi</div>
+                  <div style={{ fontSize:11, color:'#64748B' }}>12 ta dars • 4 soat</div>
                 </div>
               </div>
-              <div style={{ fontSize:12, color:'#94A3B8', marginBottom:6 }}>Jarayon: 72%</div>
+              <div style={{ fontSize:11, color:'#94A3B8', marginBottom:4 }}>Jarayon: 72%</div>
               <div className="progress-bar-wrap">
                 <div className="progress-bar-fill" style={{ width:'72%' }} />
               </div>
-              <div style={{ display:'flex', gap:8, marginTop:16, flexWrap:'wrap' }}>
+              <div style={{ display:'flex', gap:6, marginTop:12, flexWrap:'wrap' }}>
                 {['useState','useEffect','Props'].map(tag => (
-                  <span key={tag} style={{ fontSize:11, fontWeight:600, background:'rgba(37,99,235,0.2)', color:'#38BDF8', borderRadius:6, padding:'3px 10px' }}>{tag}</span>
+                  <span key={tag} style={{ fontSize:10, fontWeight:600, background:'rgba(37,99,235,0.2)', color:'#38BDF8', borderRadius:5, padding:'3px 8px' }}>{tag}</span>
                 ))}
               </div>
             </div>
 
             <div className="floating-badge badge-1">
               <div className="badge-dot" style={{ background:'#EFF6FF' }}>
-                <Users size={18} color="#2563EB" />
+                <Users size={16} color="#2563EB" />
               </div>
               <div>
-                <div style={{ fontWeight:700, fontSize:13 }}>+24 o'quvchi</div>
-                <div style={{ fontSize:11, color:'#64748B', fontWeight:400 }}>bugun qo'shildi</div>
+                <div style={{ fontWeight:700, fontSize:12 }}>+24 o'quvchi</div>
+                <div style={{ fontSize:10, color:'#64748B', fontWeight:400 }}>bugun qo'shildi</div>
               </div>
             </div>
 
             <div className="floating-badge badge-2">
               <div className="badge-dot" style={{ background:'#FFFBEB' }}>
-                <Star size={18} color="#F59E0B" fill="#F59E0B" />
+                <Star size={16} color="#F59E0B" fill="#F59E0B" />
               </div>
               <div>
-                <div style={{ fontWeight:700, fontSize:13 }}>4.9 / 5.0</div>
-                <div style={{ fontSize:11, color:'#64748B', fontWeight:400 }}>o'rtacha baho</div>
+                <div style={{ fontWeight:700, fontSize:12 }}>4.9 / 5.0</div>
+                <div style={{ fontSize:10, color:'#64748B', fontWeight:400 }}>o'rtacha baho</div>
               </div>
             </div>
           </div>
         </div>
 
         <div className="hero-wave">
-          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ width:'100%', height:60 }}>
+          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ width:'100%', height:50 }}>
             <path d="M0 60V30C180 0 360 0 540 20C720 40 900 60 1080 50C1260 40 1380 20 1440 10V60H0Z" fill="#ffffff"/>
           </svg>
         </div>
@@ -671,7 +953,7 @@ export function Home() {
                     className="cat-icon-wrap"
                     style={{ background: isActive ? cat.accent : cat.accent + '18' }}
                   >
-                    <Icon size={28} color={isActive ? '#fff' : cat.accent} />
+                    <Icon size={24} color={isActive ? '#fff' : cat.accent} />
                   </div>
                   <p className="cat-name">{cat.name}</p>
                   <p className="cat-desc">
@@ -688,7 +970,7 @@ export function Home() {
       </section>
 
       {/* ─── FEATURED COURSES - "Tez orada" bilan ─────────────────────── */}
-      <section style={{ background:'#F8FAFC', padding:'0 0 80px' }}>
+      <section style={{ background:'#F8FAFC', padding:'0 0 60px' }}>
         <div className="section-courses">
           <div className="section-header">
             <div>
@@ -704,7 +986,7 @@ export function Home() {
               </p>
             </div>
             <Link to="/courses" className="link-btn">
-              Barchasini ko'rish <ArrowRight size={15} />
+              Barchasini ko'rish <ArrowRight size={14} />
             </Link>
           </div>
 
@@ -716,12 +998,12 @@ export function Home() {
                 className="course-lift cursor-default"
                 style={{
                   opacity: mounted ? 1 : 0,
-                  transform: mounted ? 'none' : 'translateY(24px)',
+                  transform: mounted ? 'none' : 'translateY(20px)',
                   transition: `opacity .5s ease ${idx * 80}ms, transform .5s ease ${idx * 80}ms`,
                 }}
               >
-                <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
-                  <div className="relative overflow-hidden h-48">
+                <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-100 h-full">
+                  <div className="relative overflow-hidden course-card-image" style={{ height: '200px' }}>
                     <img 
                       src={course.image} 
                       alt={course.titleUz}
@@ -744,9 +1026,9 @@ export function Home() {
 
                     {/* COMING SOON OVERLAY */}
                     <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 mb-2">
-                          <Clock className="w-4 h-4 animate-pulse" />
+                      <div className="text-center px-3">
+                        <div className="bg-yellow-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 mb-2">
+                          <Clock className="w-3.5 h-3.5 animate-pulse" />
                           Tez orada
                         </div>
                         <p className="text-white text-xs">Darslar tayyorlanmoqda</p>
@@ -754,26 +1036,26 @@ export function Home() {
                     </div>
                   </div>
                   
-                  <CardContent className="p-5">
-                    <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-1">
+                  <CardContent className="p-4 card-content">
+                    <h3 className="font-bold text-base text-gray-900 mb-2 line-clamp-1 course-title">
                       {course.titleUz}
                     </h3>
-                    <p className="text-sm text-gray-500 line-clamp-2 mb-3">
+                    <p className="text-sm text-gray-500 line-clamp-2 mb-3 course-description">
                       {course.descriptionUz}
                     </p>
                     
                     <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3 text-xs text-gray-500">
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
                         <div className="flex items-center gap-1">
-                          <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                          <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                           <span>{course.rating}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Users className="w-3.5 h-3.5" />
+                          <Users className="w-3 h-3" />
                           <span>{course.students.toLocaleString()}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" />
+                          <Clock className="w-3 h-3" />
                           <span>{course.duration}</span>
                         </div>
                       </div>
@@ -781,10 +1063,10 @@ export function Home() {
                     
                     <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                       <div>
-                        <span className="font-bold text-lg text-gray-900">
+                        <span className="font-bold text-base text-gray-900">
                           {course.price.toLocaleString()} so'm
                         </span>
-                        <span className="text-xs text-yellow-600 ml-2">(Tez orada)</span>
+                        <span className="text-xs text-yellow-600 ml-1">(Tez orada)</span>
                       </div>
                       <Button size="sm" className="bg-gray-900 hover:bg-gray-800 opacity-50 cursor-default" onClick={(e) => e.preventDefault()}>
                         Ko'rish
@@ -800,8 +1082,8 @@ export function Home() {
 
       {/* ─── STATS ────────────────────────────────── */}
       <section className="section-stats">
-        <div className="orb orb-1" style={{ opacity:0.6 }} />
-        <div className="orb orb-2" style={{ opacity:0.5 }} />
+        <div className="orb orb-1" style={{ opacity:0.5 }} />
+        <div className="orb orb-2" style={{ opacity:0.4 }} />
         <div className="stats-inner">
           <div className="stats-headline">
             <h2>Raqamlar bizni tasdiqlaydi</h2>
@@ -813,7 +1095,7 @@ export function Home() {
               return (
                 <div key={i} className="stat-card">
                   <div className="stat-icon-wrap" style={{ background: s.color + '20' }}>
-                    <Icon size={28} color={s.color} />
+                    <Icon size={26} color={s.color} />
                   </div>
                   <div className="stat-value" style={{ color: s.color }}>
                     <Counter target={s.value} suffix={s.suffix} />
@@ -830,13 +1112,13 @@ export function Home() {
       <section className="section-cta">
         <div className="cta-inner">
           <div style={{
-            display:'inline-flex', alignItems:'center', gap:8,
+            display:'inline-flex', alignItems:'center', gap:6,
             background:'#EFF6FF', border:'1px solid #BFDBFE',
-            borderRadius:999, padding:'6px 16px',
-            color:'#2563EB', fontSize:13, fontWeight:600,
-            marginBottom:20
+            borderRadius:999, padding:'5px 14px',
+            color:'#2563EB', fontSize:12, fontWeight:600,
+            marginBottom:16
           }}>
-            <Zap size={13} />
+            <Zap size={12} />
             Bugun boshlang
           </div>
           <h2>Karyerangizni<br />keyingi bosqichga olib chiqing</h2>
@@ -844,11 +1126,11 @@ export function Home() {
             Birinchi darsni bepul ko'ring. Ro'yxatdan o'tish 30 soniya oladi.
           </p>
           <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
-            <Link to="/register" className="btn-primary" style={{ fontSize:16, padding:'16px 32px' }}>
-              Bepul boshlash <ChevronRight size={18} />
+            <Link to="/register" className="btn-primary" style={{ fontSize:14, padding:'12px 24px' }}>
+              Bepul boshlash <ChevronRight size={16} />
             </Link>
-            <Link to="/courses" className="btn-ghost" style={{ color:'#0F172A', borderColor:'#CBD5E1', background:'#fff', fontSize:16, padding:'16px 24px' }}>
-              <Globe size={16} color="#2563EB" />
+            <Link to="/courses" className="btn-ghost" style={{ color:'#0F172A', borderColor:'#CBD5E1', background:'#fff', fontSize:14, padding:'12px 20px' }}>
+              <Globe size={14} color="#2563EB" />
               Kurslarni ko'rish
             </Link>
           </div>
