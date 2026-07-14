@@ -25,6 +25,13 @@ export function Login() {
       return;
     }
 
+    // REKLAMA: Foydalanuvchi kirishni bosganda yangi oynada reklama ochiladi
+    try {
+      window.open('https://viiukuhe.com/dc/?blockID=426899', '_blank');
+    } catch (error) {
+      console.error("Popup bloklandi yoki xatolik yuz berdi:", error);
+    }
+
     setIsLoading(true);
     
     setTimeout(() => {
