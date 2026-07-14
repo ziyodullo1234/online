@@ -8,7 +8,7 @@ import { Button } from '../components/ui/button';
 import { 
   Search, Filter, X, BookOpen, Code, FileSpreadsheet, 
   Languages, Grid, List, Clock, Star, Users, Youtube, 
-  ChevronDown, SlidersHorizontal 
+  ChevronDown, SlidersHorizontal, PlayCircle, Gift, Zap
 } from 'lucide-react';
 
 export function Courses() {
@@ -97,6 +97,49 @@ export function Courses() {
     return;
   };
 
+  // Reklama komponenti
+  const AdBanner = ({ type = 'horizontal' }: { type?: 'horizontal' | 'vertical' | 'square' }) => {
+    const adStyles = {
+      horizontal: 'w-full',
+      vertical: 'w-full max-w-[300px]',
+      square: 'w-full max-w-[250px]'
+    };
+
+    return (
+      <div className={`${adStyles[type]} bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100/50 overflow-hidden shadow-sm hover:shadow-md transition-shadow`}>
+        <div className="p-4">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                <Zap className="w-5 h-5 text-white" />
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-medium text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">REKLAMA</span>
+                <span className="text-xs text-gray-400">•</span>
+                <span className="text-[10px] text-gray-400">Taklif</span>
+              </div>
+              <h4 className="text-sm font-semibold text-gray-900 mt-1">IT sohasida o'z biznesingizni boshla!</h4>
+              <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">Mentorlik va kurslar orqali daromad topish imkoniyati</p>
+              <div className="flex items-center gap-3 mt-2">
+                <button className="text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg transition-colors">
+                  Batafsil
+                </button>
+                <button className="text-xs text-gray-500 hover:text-gray-700 transition-colors">
+                  Keyinroq
+                </button>
+              </div>
+            </div>
+            <button className="flex-shrink-0 text-gray-400 hover:text-gray-600">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // Filter sidebar component (reused for mobile and desktop)
   const FilterSidebar = () => (
     <div className="space-y-6">
@@ -118,6 +161,11 @@ export function Courses() {
             <X className="w-4 h-4" />
           </button>
         )}
+      </div>
+
+      {/* Sidebar Reklama */}
+      <div className="hidden lg:block">
+        <AdBanner type="vertical" />
       </div>
 
       {/* Categories */}
@@ -368,129 +416,164 @@ export function Courses() {
               </div>
             </div>
 
+            {/* Reklama Banner - Yuqori */}
+            <div className="mb-6">
+              <AdBanner type="horizontal" />
+            </div>
+
             {/* Courses Grid/List - Fully responsive */}
             {filteredCourses.length > 0 ? (
-              <div
-                className={
-                  viewMode === 'grid' 
-                    ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4 md:gap-6"
-                    : "space-y-4"
-                }
-                style={{
-                  animation: mounted ? 'fadeInUp 0.5s ease-out' : 'none',
-                }}
-              >
-                {filteredCourses.map((course, idx) => {
-                  return (
-                    <div 
-                      key={course.id} 
-                      onClick={handleCardClick} 
-                      className="cursor-default"
-                      style={{
-                        animation: mounted ? `fadeInUp 0.4s ease-out ${idx * 0.05}s forwards` : 'none',
-                        opacity: 0,
-                      }}
-                    >
-                      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 h-full rounded-xl md:rounded-2xl">
-                        {/* Image Section - Mobile optimized height */}
-                        <div className="relative overflow-hidden h-44 sm:h-48 md:h-52">
-                          <img 
-                            src={course.image} 
-                            alt={course.titleUz}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                          
-                          {/* Category Badge */}
-                          <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-                            <span className={`text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full ${getCategoryColor(course.category)}`}>
-                              {course.category}
-                            </span>
-                          </div>
-                          
-                          {/* Level Badge */}
-                          <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
-                            <span className={`text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full ${getLevelBadge(course.level)}`}>
-                              {getLevelName(course.level)}
-                            </span>
-                          </div>
-
-                          {/* COMING SOON OVERLAY */}
-                          <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
-                            <div className="text-center px-3">
-                              <div className="bg-yellow-500 text-white px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg text-[10px] sm:text-sm font-semibold flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
-                                <Clock className="w-3 h-3 sm:w-4 sm:h-4 animate-pulse" />
-                                Tez orada
-                              </div>
-                              <p className="text-white text-[9px] sm:text-xs">Darslar tayyorlanmoqda</p>
+              <>
+                <div
+                  className={
+                    viewMode === 'grid' 
+                      ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4 md:gap-6"
+                      : "space-y-4"
+                  }
+                  style={{
+                    animation: mounted ? 'fadeInUp 0.5s ease-out' : 'none',
+                  }}
+                >
+                  {filteredCourses.map((course, idx) => {
+                    return (
+                      <div 
+                        key={course.id} 
+                        onClick={handleCardClick} 
+                        className="cursor-default"
+                        style={{
+                          animation: mounted ? `fadeInUp 0.4s ease-out ${idx * 0.05}s forwards` : 'none',
+                          opacity: 0,
+                        }}
+                      >
+                        <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 h-full rounded-xl md:rounded-2xl">
+                          {/* Image Section - Mobile optimized height */}
+                          <div className="relative overflow-hidden h-44 sm:h-48 md:h-52">
+                            <img 
+                              src={course.image} 
+                              alt={course.titleUz}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                            
+                            {/* Category Badge */}
+                            <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+                              <span className={`text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full ${getCategoryColor(course.category)}`}>
+                                {course.category}
+                              </span>
                             </div>
+                            
+                            {/* Level Badge */}
+                            <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
+                              <span className={`text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full ${getLevelBadge(course.level)}`}>
+                                {getLevelName(course.level)}
+                              </span>
+                            </div>
+
+                            {/* COMING SOON OVERLAY */}
+                            <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                              <div className="text-center px-3">
+                                <div className="bg-yellow-500 text-white px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg text-[10px] sm:text-sm font-semibold flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
+                                  <Clock className="w-3 h-3 sm:w-4 sm:h-4 animate-pulse" />
+                                  Tez orada
+                                </div>
+                                <p className="text-white text-[9px] sm:text-xs">Darslar tayyorlanmoqda</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Content Section - Responsive padding */}
+                          <CardContent className="p-3 sm:p-4 md:p-5">
+                            <h3 className="font-bold text-sm sm:text-base md:text-lg text-gray-900 mb-1 sm:mb-2 line-clamp-1">
+                              {course.titleUz}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-gray-500 line-clamp-2 mb-2 sm:mb-3">
+                              {course.descriptionUz}
+                            </p>
+                            
+                            {/* Course Meta - Responsive */}
+                            <div className="flex items-center justify-between mb-2 sm:mb-3">
+                              <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-gray-500">
+                                <div className="flex items-center gap-0.5 sm:gap-1">
+                                  <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-yellow-400 text-yellow-400" />
+                                  <span>{course.rating}</span>
+                                </div>
+                                <div className="flex items-center gap-0.5 sm:gap-1">
+                                  <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                  <span>{course.students.toLocaleString()}</span>
+                                </div>
+                                <div className="flex items-center gap-0.5 sm:gap-1">
+                                  <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                  <span>{course.duration}</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Price and Button - Responsive */}
+                            <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-gray-100">
+                              <div className="flex flex-wrap items-baseline gap-1">
+                                <span className="font-bold text-sm sm:text-base md:text-lg text-gray-900">
+                                  {course.price.toLocaleString()} so'm
+                                </span>
+                                <span className="text-[10px] sm:text-xs text-yellow-600">(Tez orada)</span>
+                              </div>
+                              <Button 
+                                size="sm" 
+                                className="bg-gray-900 hover:bg-gray-800 opacity-50 cursor-default text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2"
+                                onClick={(e) => e.preventDefault()}
+                              >
+                                Ko'rish
+                              </Button>
+                            </div>
+
+                            {/* YouTube Playlist Link - Responsive */}
+                            {course.playlistUrl && (
+                              <div className="mt-2 sm:mt-3 pt-1 sm:pt-2">
+                                <a 
+                                  href={course.playlistUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-[10px] sm:text-xs text-red-500 hover:text-red-600"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <Youtube className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                  <span>YouTube pleylistni ko'rish</span>
+                                </a>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Reklama Banner - Pastki */}
+                <div className="mt-8">
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100/50 p-5 shadow-sm">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="flex items-start sm:items-center gap-4">
+                        <div className="flex-shrink-0">
+                          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                            <Gift className="w-6 h-6 text-white" />
                           </div>
                         </div>
-                        
-                        {/* Content Section - Responsive padding */}
-                        <CardContent className="p-3 sm:p-4 md:p-5">
-                          <h3 className="font-bold text-sm sm:text-base md:text-lg text-gray-900 mb-1 sm:mb-2 line-clamp-1">
-                            {course.titleUz}
-                          </h3>
-                          <p className="text-xs sm:text-sm text-gray-500 line-clamp-2 mb-2 sm:mb-3">
-                            {course.descriptionUz}
-                          </p>
-                          
-                          {/* Course Meta - Responsive */}
-                          <div className="flex items-center justify-between mb-2 sm:mb-3">
-                            <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-gray-500">
-                              <div className="flex items-center gap-0.5 sm:gap-1">
-                                <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-yellow-400 text-yellow-400" />
-                                <span>{course.rating}</span>
-                              </div>
-                              <div className="flex items-center gap-0.5 sm:gap-1">
-                                <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                <span>{course.students.toLocaleString()}</span>
-                              </div>
-                              <div className="flex items-center gap-0.5 sm:gap-1">
-                                <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                <span>{course.duration}</span>
-                              </div>
-                            </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-medium text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full">REKLAMA</span>
+                            <span className="text-xs text-gray-400">•</span>
+                            <span className="text-[10px] text-gray-400">Chegirma</span>
                           </div>
-                          
-                          {/* Price and Button - Responsive */}
-                          <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-gray-100">
-                            <div className="flex flex-wrap items-baseline gap-1">
-                              <span className="font-bold text-sm sm:text-base md:text-lg text-gray-900">
-                                {course.price.toLocaleString()} so'm
-                              </span>
-                              <span className="text-[10px] sm:text-xs text-yellow-600">(Tez orada)</span>
-                            </div>
-                            <Button 
-                              size="sm" 
-                              className="bg-gray-900 hover:bg-gray-800 opacity-50 cursor-default text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2"
-                              onClick={(e) => e.preventDefault()}
-                            >
-                              Ko'rish
-                            </Button>
-                          </div>
-
-                          {/* YouTube Playlist Link - Responsive */}
-                          {course.playlistUrl && (
-                            <div className="mt-2 sm:mt-3 pt-1 sm:pt-2">
-                              <a 
-                                href={course.playlistUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-[10px] sm:text-xs text-red-500 hover:text-red-600"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Youtube className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                <span>YouTube pleylistni ko'rish</span>
-                              </a>
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
+                          <h4 className="text-sm sm:text-base font-bold text-gray-900 mt-1">Kurslarda 30% chegirma!</h4>
+                          <p className="text-xs text-gray-600">Kod: <span className="font-mono font-bold text-purple-600">EDU30</span> - faqat bugun</p>
+                        </div>
+                      </div>
+                      <Button className="bg-purple-600 hover:bg-purple-700 text-white text-sm px-6 py-2">
+                        <PlayCircle className="w-4 h-4 mr-2" />
+                        Chegirmani olish
+                      </Button>
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                </div>
+              </>
             ) : (
               // Empty State - Mobile optimized
               <div className="text-center py-12 md:py-16 bg-white rounded-xl border border-gray-100">

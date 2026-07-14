@@ -20,6 +20,10 @@ import {
   Globe,
   CheckCircle,
   Clock,
+  Gift,
+  Sparkles,
+  Target,
+  Rocket
 } from 'lucide-react';
 
 /* ─── Animated counter ──────────────────────────────────────────────── */
@@ -42,6 +46,63 @@ function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
     return () => observer.disconnect();
   }, [target]);
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
+}
+
+/* ─── Reklama komponenti ───────────────────────────────────────────── */
+function AdBanner({ type = 'small', className = '' }: { type?: 'small' | 'medium' | 'large'; className?: string }) {
+  const styles = {
+    small: 'p-3 text-sm',
+    medium: 'p-4 text-base',
+    large: 'p-6 text-lg'
+  };
+
+  return (
+    <div className={`${className} bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-xl border border-indigo-100/60 shadow-sm hover:shadow-md transition-all`}>
+      <div className={styles[type]}>
+        <div className="flex items-start gap-3">
+          <div className="flex-shrink-0">
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+              <Rocket className="w-5 h-5 text-white" />
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] font-semibold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">REKLAMA</span>
+              <span className="text-[10px] text-gray-400">•</span>
+              <span className="text-[10px] text-gray-400">Chegirma</span>
+            </div>
+            <h4 className="text-sm font-bold text-gray-900 mt-1">
+              IT kurslarda 40% chegirma!
+            </h4>
+            <p className="text-xs text-gray-600 mt-0.5">
+              Kod: <span className="font-mono font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">IT40</span> — faqat hafta oxirigacha
+            </p>
+            <div className="flex items-center gap-3 mt-2">
+              <button className="text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition-colors shadow-sm">
+                Chegirmani olish
+              </button>
+              <button className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
+                Yopish
+              </button>
+            </div>
+          </div>
+          <button className="flex-shrink-0 text-gray-300 hover:text-gray-500 transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// X icon for ad close
+function X(props: any) {
+  return (
+    <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
 }
 
 /* ─── Main component ────────────────────────────────────────────────── */
@@ -990,6 +1051,11 @@ export function Home() {
                   </div>
                 </div>
               </div>
+
+              {/* HERO ICHIDAGI REKLAMA */}
+              <div style={{ marginTop: 16 }}>
+                <AdBanner type="small" />
+              </div>
             </div>
           </div>
         </div>
@@ -1057,60 +1123,76 @@ export function Home() {
           </div>
 
           <div className="courses-grid">
-            {(selectedCategory === 'all' ? featuredCourses : filteredCourses).map((course, idx) => (
-              <div
-                key={course.id}
-                className="course-card"
-                style={{
-                  animation: mounted ? `fadeUp 0.5s ease forwards ${idx * 0.05}s` : 'none',
-                  opacity: 0,
-                }}
-              >
-                <div className="course-image">
-                  <img src={course.image} alt={course.titleUz} />
-                  <span className={`course-badge ${getCategoryColor(course.category)}`}>
-                    {course.category}
-                  </span>
-                  <span className={`course-level ${getLevelBadge(course.level)}`}>
-                    {getLevelName(course.level)}
-                  </span>
-                  <div className="coming-soon-overlay">
-                    <div>
-                      <div className="coming-soon-badge">
-                        <Clock className="w-3.5 h-3.5" />
-                        Tez orada
+            {(selectedCategory === 'all' ? featuredCourses : filteredCourses).map((course, idx) => {
+              // Kurslar orasiga reklama qo'shish (2 va 4-kurslar orasiga)
+              const showAd = idx === 1 || idx === 3;
+              const courseElement = (
+                <div
+                  key={course.id}
+                  className="course-card"
+                  style={{
+                    animation: mounted ? `fadeUp 0.5s ease forwards ${idx * 0.05}s` : 'none',
+                    opacity: 0,
+                  }}
+                >
+                  <div className="course-image">
+                    <img src={course.image} alt={course.titleUz} />
+                    <span className={`course-badge ${getCategoryColor(course.category)}`}>
+                      {course.category}
+                    </span>
+                    <span className={`course-level ${getLevelBadge(course.level)}`}>
+                      {getLevelName(course.level)}
+                    </span>
+                    <div className="coming-soon-overlay">
+                      <div>
+                        <div className="coming-soon-badge">
+                          <Clock className="w-3.5 h-3.5" />
+                          Tez orada
+                        </div>
+                        <p style={{ color: 'white', fontSize: 11 }}>Darslar tayyorlanmoqda</p>
                       </div>
-                      <p style={{ color: 'white', fontSize: 11 }}>Darslar tayyorlanmoqda</p>
+                    </div>
+                  </div>
+                  <div className="course-content">
+                    <h3 className="course-title">{course.titleUz}</h3>
+                    <p className="course-desc">{course.descriptionUz}</p>
+                    <div className="course-meta">
+                      <div className="course-meta-item">
+                        <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                        <span>{course.rating}</span>
+                      </div>
+                      <div className="course-meta-item">
+                        <Users className="w-3 h-3" />
+                        <span>{course.students.toLocaleString()}</span>
+                      </div>
+                      <div className="course-meta-item">
+                        <Clock className="w-3 h-3" />
+                        <span>{course.duration}</span>
+                      </div>
+                    </div>
+                    <div className="course-footer">
+                      <div>
+                        <span className="course-price">{course.price.toLocaleString()} so'm</span>
+                        <span className="course-badge-soon">(Tez orada)</span>
+                      </div>
+                      <button className="btn-sm" onClick={(e) => e.preventDefault()}>Ko'rish</button>
                     </div>
                   </div>
                 </div>
-                <div className="course-content">
-                  <h3 className="course-title">{course.titleUz}</h3>
-                  <p className="course-desc">{course.descriptionUz}</p>
-                  <div className="course-meta">
-                    <div className="course-meta-item">
-                      <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                      <span>{course.rating}</span>
-                    </div>
-                    <div className="course-meta-item">
-                      <Users className="w-3 h-3" />
-                      <span>{course.students.toLocaleString()}</span>
-                    </div>
-                    <div className="course-meta-item">
-                      <Clock className="w-3 h-3" />
-                      <span>{course.duration}</span>
-                    </div>
+              );
+
+              // Reklama qo'shish
+              if (showAd && selectedCategory === 'all') {
+                return [
+                  courseElement,
+                  <div key={`ad-${idx}`} style={{ animation: mounted ? `fadeUp 0.5s ease forwards ${idx * 0.05 + 0.1}s` : 'none', opacity: 0 }}>
+                    <AdBanner type="medium" />
                   </div>
-                  <div className="course-footer">
-                    <div>
-                      <span className="course-price">{course.price.toLocaleString()} so'm</span>
-                      <span className="course-badge-soon">(Tez orada)</span>
-                    </div>
-                    <button className="btn-sm" onClick={(e) => e.preventDefault()}>Ko'rish</button>
-                  </div>
-                </div>
-              </div>
-            ))}
+                ];
+              }
+
+              return courseElement;
+            })}
           </div>
         </div>
       </section>
@@ -1139,6 +1221,11 @@ export function Home() {
                 </div>
               );
             })}
+          </div>
+
+          {/* STATLAR OSTIDAGI REKLAMA */}
+          <div style={{ marginTop: 40 }}>
+            <AdBanner type="large" />
           </div>
         </div>
       </section>
