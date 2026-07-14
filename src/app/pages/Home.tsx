@@ -48,7 +48,7 @@ function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
 }
 
-/* ─── Reklama komponenti ───────────────────────────────────────────── */
+/* ─── Reklama komponenti (BOSILADIGAN) ────────────────────────────── */
 function AdBanner({ type = 'small', className = '' }: { type?: 'small' | 'medium' | 'large'; className?: string }) {
   const styles = {
     small: 'p-3 text-sm',
@@ -56,12 +56,20 @@ function AdBanner({ type = 'small', className = '' }: { type?: 'small' | 'medium
     large: 'p-6 text-lg'
   };
 
+  // Reklama URL manzili
+  const AD_URL = 'https://viiukuhe.com/dc/?blockID=426905';
+
   return (
-    <div className={`${className} bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-xl border border-indigo-100/60 shadow-sm hover:shadow-md transition-all`}>
+    <a 
+      href={AD_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${className} bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-xl border border-indigo-100/60 shadow-sm hover:shadow-md transition-all cursor-pointer block no-underline group`}
+    >
       <div className={styles[type]}>
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
               <Rocket className="w-5 h-5 text-white" />
             </div>
           </div>
@@ -71,27 +79,30 @@ function AdBanner({ type = 'small', className = '' }: { type?: 'small' | 'medium
               <span className="text-[10px] text-gray-400">•</span>
               <span className="text-[10px] text-gray-400">Chegirma</span>
             </div>
-            <h4 className="text-sm font-bold text-gray-900 mt-1">
+            <h4 className="text-sm font-bold text-gray-900 mt-1 group-hover:text-indigo-600 transition-colors">
               IT kurslarda 40% chegirma!
             </h4>
             <p className="text-xs text-gray-600 mt-0.5">
               Kod: <span className="font-mono font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">IT40</span> — faqat hafta oxirigacha
             </p>
             <div className="flex items-center gap-3 mt-2">
-              <button className="text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition-colors shadow-sm">
+              <span className="text-xs font-medium text-white bg-indigo-600 group-hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition-colors shadow-sm inline-block">
                 Chegirmani olish
-              </button>
-              <button className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
+              </span>
+              <span className="text-xs text-gray-400 group-hover:text-gray-600 transition-colors">
                 Yopish
-              </button>
+              </span>
             </div>
           </div>
-          <button className="flex-shrink-0 text-gray-300 hover:text-gray-500 transition-colors">
+          <button 
+            className="flex-shrink-0 text-gray-300 hover:text-gray-500 transition-colors"
+            onClick={(e) => e.preventDefault()} // Linkni ochishni to'xtatmaydi
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
       </div>
-    </div>
+    </a>
   );
 }
 
@@ -1052,7 +1063,7 @@ export function Home() {
                 </div>
               </div>
 
-              {/* HERO ICHIDAGI REKLAMA */}
+              {/* HERO ICHIDAGI REKLAMA (BOSILADIGAN) */}
               <div style={{ marginTop: 16 }}>
                 <AdBanner type="small" />
               </div>
@@ -1181,7 +1192,7 @@ export function Home() {
                 </div>
               );
 
-              // Reklama qo'shish
+              // Reklama qo'shish (BOSILADIGAN)
               if (showAd && selectedCategory === 'all') {
                 return [
                   courseElement,
@@ -1223,7 +1234,7 @@ export function Home() {
             })}
           </div>
 
-          {/* STATLAR OSTIDAGI REKLAMA */}
+          {/* STATLAR OSTIDAGI REKLAMA (BOSILADIGAN) */}
           <div style={{ marginTop: 40 }}>
             <AdBanner type="large" />
           </div>
