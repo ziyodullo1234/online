@@ -5,10 +5,10 @@ import { Card, CardContent } from '../components/ui/card';
 import { Label } from '../components/ui/label';
 import { Slider } from '../components/ui/slider';
 import { Button } from '../components/ui/button';
-import { 
-  Search, Filter, X, BookOpen, Code, FileSpreadsheet, 
-  Languages, Grid, List, Clock, Star, Users, Youtube, 
-  ChevronDown, SlidersHorizontal, PlayCircle, Gift, Zap
+import {
+  Search, Filter, X, BookOpen, Code, FileSpreadsheet,
+  Languages, Grid, List, Clock, Star, Users, Youtube,
+  ChevronDown, SlidersHorizontal
 } from 'lucide-react';
 
 export function Courses() {
@@ -46,7 +46,7 @@ export function Courses() {
     if (categoryFilter !== 'all' && course.category !== categoryFilter) return false;
     if (levelFilter !== 'all' && course.level !== levelFilter) return false;
     if (course.price > maxPrice) return false;
-    if (searchQuery && !course.title.toLowerCase().includes(searchQuery.toLowerCase()) && 
+    if (searchQuery && !course.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
         !course.description.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
@@ -93,53 +93,6 @@ export function Courses() {
     }
   };
 
-  const handleCardClick = () => {
-    return;
-  };
-
-  // Reklama komponenti
-  const AdBanner = ({ type = 'horizontal' }: { type?: 'horizontal' | 'vertical' | 'square' }) => {
-    const adStyles = {
-      horizontal: 'w-full',
-      vertical: 'w-full max-w-[300px]',
-      square: 'w-full max-w-[250px]'
-    };
-
-    return (
-      <div className={`${adStyles[type]} bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100/50 overflow-hidden shadow-sm hover:shadow-md transition-shadow`}>
-        <div className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-medium text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">REKLAMA</span>
-                <span className="text-xs text-gray-400">•</span>
-                <span className="text-[10px] text-gray-400">Taklif</span>
-              </div>
-              <h4 className="text-sm font-semibold text-gray-900 mt-1">IT sohasida o'z biznesingizni boshla!</h4>
-              <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">Mentorlik va kurslar orqali daromad topish imkoniyati</p>
-              <div className="flex items-center gap-3 mt-2">
-                <button className="text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg transition-colors">
-                  Batafsil
-                </button>
-                <button className="text-xs text-gray-500 hover:text-gray-700 transition-colors">
-                  Keyinroq
-                </button>
-              </div>
-            </div>
-            <button className="flex-shrink-0 text-gray-400 hover:text-gray-600">
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   // Filter sidebar component (reused for mobile and desktop)
   const FilterSidebar = () => (
     <div className="space-y-6">
@@ -151,7 +104,7 @@ export function Courses() {
           placeholder="Qidirish..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 text-sm"
+          className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 text-sm transition-colors"
         />
         {searchQuery && (
           <button
@@ -163,15 +116,10 @@ export function Courses() {
         )}
       </div>
 
-      {/* Sidebar Reklama */}
-      <div className="hidden lg:block">
-        <AdBanner type="vertical" />
-      </div>
-
       {/* Categories */}
       <div>
         <Label className="text-sm font-medium text-gray-700 mb-3 block">Kategoriyalar</Label>
-        <div className="grid grid-cols-2 gap-2 lg:block lg:space-y-1">
+        <div className="grid grid-cols-2 gap-2 lg:block lg:space-y-1.5">
           {categories.map((category) => {
             const Icon = category.icon;
             const isActive = categoryFilter === category.id;
@@ -181,7 +129,7 @@ export function Courses() {
                 onClick={() => setCategoryFilter(category.id)}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
                   isActive
-                    ? 'bg-gray-900 text-white shadow-md'
+                    ? 'bg-gray-900 text-white shadow-md shadow-gray-900/10'
                     : 'text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-200'
                 }`}
               >
@@ -189,7 +137,7 @@ export function Courses() {
                   <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-gray-400'}`} />
                   <span className="text-sm font-medium">{category.name}</span>
                 </div>
-                <span className={`text-xs ${isActive ? 'text-gray-300' : 'text-gray-400'}`}>
+                <span className={`text-xs rounded-full px-1.5 py-0.5 ${isActive ? 'bg-white/15 text-white' : 'bg-gray-100 text-gray-500'}`}>
                   {category.count}
                 </span>
               </button>
@@ -201,14 +149,14 @@ export function Courses() {
       {/* Levels */}
       <div>
         <Label className="text-sm font-medium text-gray-700 mb-3 block">Daraja</Label>
-        <div className="flex flex-wrap gap-2 lg:block lg:space-y-1">
+        <div className="flex flex-wrap gap-2 lg:flex-col lg:gap-1.5">
           {levels.map((level) => (
             <button
               key={level.id}
               onClick={() => setLevelFilter(level.id)}
-              className={`px-4 py-2 rounded-xl transition-all text-sm font-medium ${
+              className={`px-4 py-2 rounded-xl transition-all text-sm font-medium lg:w-full lg:text-left ${
                 levelFilter === level.id
-                  ? 'bg-gray-900 text-white shadow-md'
+                  ? 'bg-gray-900 text-white shadow-md shadow-gray-900/10'
                   : 'text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
@@ -256,7 +204,7 @@ export function Courses() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       {/* Hero Section - Mobile optimized */}
       <section className="bg-white border-b border-gray-100">
         <div className="container mx-auto px-4 py-8 md:py-12">
@@ -273,7 +221,7 @@ export function Courses() {
 
       <div className="container mx-auto px-4 py-6 md:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 md:gap-8">
-          
+
           {/* Desktop Filter Sidebar */}
           <div className="hidden lg:block lg:col-span-1">
             <div className="sticky top-24">
@@ -303,13 +251,13 @@ export function Courses() {
           <div className="lg:hidden mb-4">
             <button
               onClick={() => setMobileFiltersOpen(true)}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-white border border-gray-200 rounded-xl shadow-sm"
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-white border border-gray-200 rounded-xl shadow-sm active:scale-[0.99] transition-transform"
             >
               <SlidersHorizontal className="w-4 h-4 text-gray-600" />
               <span className="font-medium text-gray-700">Filterlar</span>
               {hasActiveFilters && (
                 <span className="ml-auto bg-gray-900 text-white text-xs px-2 py-0.5 rounded-full">
-                  Active
+                  Faol
                 </span>
               )}
               <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -336,7 +284,7 @@ export function Courses() {
                 <div className="sticky bottom-0 bg-white border-t border-gray-100 p-4">
                   <button
                     onClick={() => setMobileFiltersOpen(false)}
-                    className="w-full py-3 bg-gray-900 text-white font-medium rounded-xl"
+                    className="w-full py-3 bg-gray-900 text-white font-medium rounded-xl active:scale-[0.99] transition-transform"
                   >
                     Qo'llash ({filteredCourses.length} ta kurs)
                   </button>
@@ -394,14 +342,15 @@ export function Courses() {
                   {filteredCourses.length} ta kurs
                 </p>
               </div>
-              
+
               {/* View Toggle - Improved for mobile */}
-              <div className="flex items-center gap-1 border border-gray-200 rounded-xl p-1 self-start">
+              <div className="flex items-center gap-1 border border-gray-200 rounded-xl p-1 self-start bg-white">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-lg transition-all ${
                     viewMode === 'grid' ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-400 hover:text-gray-600'
                   }`}
+                  aria-label="Katakcha ko'rinishi"
                 >
                   <Grid className="w-4 h-4" />
                 </button>
@@ -410,175 +359,133 @@ export function Courses() {
                   className={`p-2 rounded-lg transition-all ${
                     viewMode === 'list' ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-400 hover:text-gray-600'
                   }`}
+                  aria-label="Ro'yxat ko'rinishi"
                 >
                   <List className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/* Reklama Banner - Yuqori */}
-            <div className="mb-6">
-              <AdBanner type="horizontal" />
-            </div>
-
             {/* Courses Grid/List - Fully responsive */}
             {filteredCourses.length > 0 ? (
-              <>
-                <div
-                  className={
-                    viewMode === 'grid' 
-                      ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4 md:gap-6"
-                      : "space-y-4"
-                  }
-                  style={{
-                    animation: mounted ? 'fadeInUp 0.5s ease-out' : 'none',
-                  }}
-                >
-                  {filteredCourses.map((course, idx) => {
-                    return (
-                      <div 
-                        key={course.id} 
-                        onClick={handleCardClick} 
-                        className="cursor-default"
-                        style={{
-                          animation: mounted ? `fadeInUp 0.4s ease-out ${idx * 0.05}s forwards` : 'none',
-                          opacity: 0,
-                        }}
-                      >
-                        <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 h-full rounded-xl md:rounded-2xl">
-                          {/* Image Section - Mobile optimized height */}
-                          <div className="relative overflow-hidden h-44 sm:h-48 md:h-52">
-                            <img 
-                              src={course.image} 
-                              alt={course.titleUz}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                            
-                            {/* Category Badge */}
-                            <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-                              <span className={`text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full ${getCategoryColor(course.category)}`}>
-                                {course.category}
-                              </span>
-                            </div>
-                            
-                            {/* Level Badge */}
-                            <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
-                              <span className={`text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full ${getLevelBadge(course.level)}`}>
-                                {getLevelName(course.level)}
-                              </span>
-                            </div>
+              <div
+                className={
+                  viewMode === 'grid'
+                    ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4 md:gap-6"
+                    : "space-y-4"
+                }
+              >
+                {filteredCourses.map((course, idx) => (
+                  <div
+                    key={course.id}
+                    style={{
+                      animation: mounted ? `fadeInUp 0.4s ease-out ${idx * 0.05}s forwards` : 'none',
+                      opacity: 0,
+                    }}
+                  >
+                    <Card className={`group overflow-hidden hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 border border-gray-100 rounded-xl md:rounded-2xl ${viewMode === 'list' ? 'flex flex-row' : 'h-full'}`}>
+                      {/* Image Section */}
+                      <div className={`relative overflow-hidden ${viewMode === 'list' ? 'w-24 sm:w-48 flex-shrink-0' : 'h-44 sm:h-48 md:h-52'}`}>
+                        <img
+                          src={course.image}
+                          alt={course.titleUz}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
 
-                            {/* COMING SOON OVERLAY */}
-                            <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
-                              <div className="text-center px-3">
-                                <div className="bg-yellow-500 text-white px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg text-[10px] sm:text-sm font-semibold flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
-                                  <Clock className="w-3 h-3 sm:w-4 sm:h-4 animate-pulse" />
-                                  Tez orada
-                                </div>
-                                <p className="text-white text-[9px] sm:text-xs">Darslar tayyorlanmoqda</p>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {/* Content Section - Responsive padding */}
-                          <CardContent className="p-3 sm:p-4 md:p-5">
-                            <h3 className="font-bold text-sm sm:text-base md:text-lg text-gray-900 mb-1 sm:mb-2 line-clamp-1">
-                              {course.titleUz}
-                            </h3>
-                            <p className="text-xs sm:text-sm text-gray-500 line-clamp-2 mb-2 sm:mb-3">
-                              {course.descriptionUz}
-                            </p>
-                            
-                            {/* Course Meta - Responsive */}
-                            <div className="flex items-center justify-between mb-2 sm:mb-3">
-                              <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-gray-500">
-                                <div className="flex items-center gap-0.5 sm:gap-1">
-                                  <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-yellow-400 text-yellow-400" />
-                                  <span>{course.rating}</span>
-                                </div>
-                                <div className="flex items-center gap-0.5 sm:gap-1">
-                                  <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                  <span>{course.students.toLocaleString()}</span>
-                                </div>
-                                <div className="flex items-center gap-0.5 sm:gap-1">
-                                  <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                  <span>{course.duration}</span>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            {/* Price and Button - Responsive */}
-                            <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-gray-100">
-                              <div className="flex flex-wrap items-baseline gap-1">
-                                <span className="font-bold text-sm sm:text-base md:text-lg text-gray-900">
-                                  {course.price.toLocaleString()} so'm
-                                </span>
-                                <span className="text-[10px] sm:text-xs text-yellow-600">(Tez orada)</span>
-                              </div>
-                              <Button 
-                                size="sm" 
-                                className="bg-gray-900 hover:bg-gray-800 opacity-50 cursor-default text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2"
-                                onClick={(e) => e.preventDefault()}
-                              >
-                                Ko'rish
-                              </Button>
-                            </div>
+                        {/* Category Badge */}
+                        <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+                          <span className={`text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full ${getCategoryColor(course.category)}`}>
+                            {course.category}
+                          </span>
+                        </div>
 
-                            {/* YouTube Playlist Link - Responsive */}
-                            {course.playlistUrl && (
-                              <div className="mt-2 sm:mt-3 pt-1 sm:pt-2">
-                                <a 
-                                  href={course.playlistUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-[10px] sm:text-xs text-red-500 hover:text-red-600"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <Youtube className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                  <span>YouTube pleylistni ko'rish</span>
-                                </a>
-                              </div>
-                            )}
-                          </CardContent>
-                        </Card>
-                      </div>
-                    );
-                  })}
-                </div>
+                        {/* Level Badge */}
+                        <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
+                          <span className={`text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full ${getLevelBadge(course.level)}`}>
+                            {getLevelName(course.level)}
+                          </span>
+                        </div>
 
-                {/* Reklama Banner - Pastki */}
-                <div className="mt-8">
-                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100/50 p-5 shadow-sm">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                      <div className="flex items-start sm:items-center gap-4">
-                        <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                            <Gift className="w-6 h-6 text-white" />
+                        {/* COMING SOON OVERLAY */}
+                        <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                          <div className="text-center px-3">
+                            <div className="bg-amber-500 text-white px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg text-[10px] sm:text-sm font-semibold flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
+                              <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                              Tez orada
+                            </div>
+                            <p className="text-white text-[9px] sm:text-xs">Darslar tayyorlanmoqda</p>
                           </div>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-medium text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full">REKLAMA</span>
-                            <span className="text-xs text-gray-400">•</span>
-                            <span className="text-[10px] text-gray-400">Chegirma</span>
-                          </div>
-                          <h4 className="text-sm sm:text-base font-bold text-gray-900 mt-1">Kurslarda 30% chegirma!</h4>
-                          <p className="text-xs text-gray-600">Kod: <span className="font-mono font-bold text-purple-600">EDU30</span> - faqat bugun</p>
-                        </div>
                       </div>
-                      <Button className="bg-purple-600 hover:bg-purple-700 text-white text-sm px-6 py-2">
-                        <PlayCircle className="w-4 h-4 mr-2" />
-                        Chegirmani olish
-                      </Button>
-                    </div>
+
+                      {/* Content Section - Responsive padding */}
+                      <CardContent className="p-3 sm:p-4 md:p-5 flex-1 flex flex-col min-w-0">
+                        <h3 className="font-bold text-sm sm:text-base md:text-lg text-gray-900 mb-1 sm:mb-2 line-clamp-1">
+                          {course.titleUz}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-gray-500 line-clamp-2 mb-2 sm:mb-3">
+                          {course.descriptionUz}
+                        </p>
+
+                        {/* Course Meta - Responsive */}
+                        <div className="flex items-center justify-between mb-2 sm:mb-3">
+                          <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-gray-500">
+                            <div className="flex items-center gap-0.5 sm:gap-1">
+                              <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-yellow-400 text-yellow-400" />
+                              <span>{course.rating}</span>
+                            </div>
+                            <div className="flex items-center gap-0.5 sm:gap-1">
+                              <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                              <span>{course.students.toLocaleString()}</span>
+                            </div>
+                            <div className="flex items-center gap-0.5 sm:gap-1">
+                              <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                              <span>{course.duration}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Price and Button - Responsive */}
+                        <div className="flex items-center justify-between gap-2 flex-wrap pt-2 sm:pt-3 border-t border-gray-100 mt-auto">
+                          <div className="flex flex-wrap items-baseline gap-1 min-w-0">
+                            <span className="font-bold text-sm sm:text-base md:text-lg text-gray-900 whitespace-nowrap">
+                              {course.price.toLocaleString()} so'm
+                            </span>
+                            <span className="text-[10px] sm:text-xs text-amber-600 whitespace-nowrap">(Tez orada)</span>
+                          </div>
+                          <Button
+                            size="sm"
+                            disabled
+                            className="bg-gray-200 text-gray-500 cursor-not-allowed text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2 hover:bg-gray-200 shrink-0"
+                          >
+                            Ko'rish
+                          </Button>
+                        </div>
+
+                        {/* YouTube Playlist Link - Responsive */}
+                        {course.playlistUrl && (
+                          <div className="mt-2 sm:mt-3 pt-1 sm:pt-2">
+                            <a
+                              href={course.playlistUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-[10px] sm:text-xs text-red-500 hover:text-red-600"
+                            >
+                              <Youtube className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                              <span>YouTube pleylistni ko'rish</span>
+                            </a>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
                   </div>
-                </div>
-              </>
+                ))}
+              </div>
             ) : (
               // Empty State - Mobile optimized
               <div className="text-center py-12 md:py-16 bg-white rounded-xl border border-gray-100">
                 <div className="w-14 h-14 md:w-16 md:h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="w-6 h-6 md:w-6 md:h-6 text-gray-400" />
+                  <Search className="w-6 h-6 text-gray-400" />
                 </div>
                 <h3 className="text-base md:text-lg font-medium text-gray-900 mb-1">Kurs topilmadi</h3>
                 <p className="text-sm text-gray-500 mb-4">Filterlarni o'zgartirib ko'ring</p>
@@ -606,7 +513,7 @@ export function Courses() {
             transform: translateY(0);
           }
         }
-        
+
         @keyframes slideUp {
           from {
             transform: translateY(100%);
@@ -615,7 +522,7 @@ export function Courses() {
             transform: translateY(0);
           }
         }
-        
+
         .animate-slide-up {
           animation: slideUp 0.3s ease-out;
         }

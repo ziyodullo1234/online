@@ -2,8 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { Header } from '../components/Header';
 import { mockCourses } from '../data/mockData';
-import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
 import {
   Code,
   FileSpreadsheet,
@@ -20,10 +18,6 @@ import {
   Globe,
   CheckCircle,
   Clock,
-  Gift,
-  Sparkles,
-  Target,
-  Rocket
 } from 'lucide-react';
 
 /* ─── Animated counter ──────────────────────────────────────────────── */
@@ -46,74 +40,6 @@ function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
     return () => observer.disconnect();
   }, [target]);
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
-}
-
-/* ─── Reklama komponenti (BOSILADIGAN) ────────────────────────────── */
-function AdBanner({ type = 'small', className = '' }: { type?: 'small' | 'medium' | 'large'; className?: string }) {
-  const styles = {
-    small: 'p-3 text-sm',
-    medium: 'p-4 text-base',
-    large: 'p-6 text-lg'
-  };
-
-  // Reklama URL manzili
-  const AD_URL = 'https://viiukuhe.com/dc/?blockID=426905';
-
-  return (
-    <a 
-      href={AD_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`${className} bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-xl border border-indigo-100/60 shadow-sm hover:shadow-md transition-all cursor-pointer block no-underline group`}
-    >
-      <div className={styles[type]}>
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-              <Rocket className="w-5 h-5 text-white" />
-            </div>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-semibold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">REKLAMA</span>
-              <span className="text-[10px] text-gray-400">•</span>
-              <span className="text-[10px] text-gray-400">Chegirma</span>
-            </div>
-            <h4 className="text-sm font-bold text-gray-900 mt-1 group-hover:text-indigo-600 transition-colors">
-              IT kurslarda 40% chegirma!
-            </h4>
-            <p className="text-xs text-gray-600 mt-0.5">
-              Kod: <span className="font-mono font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">IT40</span> — faqat hafta oxirigacha
-            </p>
-            <div className="flex items-center gap-3 mt-2">
-              <span className="text-xs font-medium text-white bg-indigo-600 group-hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition-colors shadow-sm inline-block">
-                Chegirmani olish
-              </span>
-              <span className="text-xs text-gray-400 group-hover:text-gray-600 transition-colors">
-                Yopish
-              </span>
-            </div>
-          </div>
-          <button 
-            className="flex-shrink-0 text-gray-300 hover:text-gray-500 transition-colors"
-            onClick={(e) => e.preventDefault()} // Linkni ochishni to'xtatmaydi
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-    </a>
-  );
-}
-
-// X icon for ad close
-function X(props: any) {
-  return (
-    <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  );
 }
 
 /* ─── Main component ────────────────────────────────────────────────── */
@@ -220,14 +146,14 @@ export function Home() {
         }
 
         .hero-content {
-          padding: 80px 16px 100px;
+          padding: 80px 0 60px;
           position: relative;
           z-index: 2;
         }
 
         @media (max-width: 768px) {
           .hero-content {
-            padding: 60px 16px 80px;
+            padding: 44px 0 40px;
           }
         }
 
@@ -322,6 +248,13 @@ export function Home() {
         .btn-primary {
           background: var(--electric);
           color: white;
+          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-primary:hover {
+          background: #1D4ED8;
+          box-shadow: 0 10px 24px rgba(37, 99, 235, 0.45);
+          transform: translateY(-1px);
         }
 
         .btn-primary:active {
@@ -332,12 +265,16 @@ export function Home() {
         .btn-ghost {
           background: rgba(255, 255, 255, 0.06);
           color: var(--text);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .btn-ghost:hover {
+          background: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.2);
         }
 
         .btn-ghost:active {
           transform: scale(0.97);
-          background: rgba(255, 255, 255, 0.12);
         }
 
         .benefits-list {
@@ -364,8 +301,9 @@ export function Home() {
           background: var(--card-bg);
           border: 1px solid rgba(255, 255, 255, 0.08);
           border-radius: 24px;
-          padding: 20px;
+          padding: 24px;
           margin-top: 40px;
+          box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5);
         }
 
         @media (min-width: 768px) {
@@ -430,12 +368,12 @@ export function Home() {
         /* ========== CATEGORIES ========== */
         .categories-section {
           background: white;
-          padding: 50px 16px;
+          padding: 60px 16px;
         }
 
         @media (max-width: 768px) {
           .categories-section {
-            padding: 40px 16px;
+            padding: 44px 16px;
           }
         }
 
@@ -470,7 +408,7 @@ export function Home() {
         .categories-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 12px;
+          gap: 14px;
         }
 
         @media (max-width: 640px) {
@@ -484,7 +422,7 @@ export function Home() {
           background: #F8FAFC;
           border: 2px solid transparent;
           border-radius: 16px;
-          padding: 20px 12px;
+          padding: 22px 12px;
           text-align: center;
           cursor: pointer;
           transition: all 0.2s ease;
@@ -496,10 +434,16 @@ export function Home() {
           }
         }
 
+        .category-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 24px -12px rgba(15, 23, 42, 0.15);
+        }
+
         .category-card.active {
           border-color: var(--active-color);
           background: var(--active-bg);
           transform: translateY(-2px);
+          box-shadow: 0 12px 24px -12px rgba(15, 23, 42, 0.15);
         }
 
         .category-card:active {
@@ -559,12 +503,12 @@ export function Home() {
         /* ========== COURSES GRID ========== */
         .courses-section {
           background: #F8FAFC;
-          padding: 0 16px 60px;
+          padding: 0 16px 70px;
         }
 
         @media (max-width: 768px) {
           .courses-section {
-            padding: 0 16px 40px;
+            padding: 0 16px 44px;
           }
         }
 
@@ -592,7 +536,13 @@ export function Home() {
           border-radius: 20px;
           overflow: hidden;
           border: 1px solid #E2E8F0;
-          transition: all 0.2s ease;
+          transition: all 0.25s ease;
+        }
+
+        .course-card:hover {
+          box-shadow: 0 20px 40px -16px rgba(15, 23, 42, 0.18);
+          transform: translateY(-3px);
+          border-color: #CBD5E1;
         }
 
         .course-card:active {
@@ -615,6 +565,11 @@ export function Home() {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          transition: transform 0.4s ease;
+        }
+
+        .course-card:hover .course-image img {
+          transform: scale(1.05);
         }
 
         .course-badge {
@@ -640,7 +595,8 @@ export function Home() {
         .coming-soon-overlay {
           position: absolute;
           inset: 0;
-          background: rgba(0, 0, 0, 0.75);
+          background: rgba(10, 15, 30, 0.7);
+          backdrop-filter: blur(1px);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -661,7 +617,7 @@ export function Home() {
         }
 
         .course-content {
-          padding: 16px;
+          padding: 18px 16px;
         }
 
         .course-title {
@@ -720,23 +676,23 @@ export function Home() {
         .btn-sm {
           padding: 8px 16px;
           font-size: 13px;
-          background: #0F172A;
-          color: white;
+          background: #E2E8F0;
+          color: #64748B;
           border-radius: 10px;
           border: none;
-          opacity: 0.5;
+          cursor: not-allowed;
         }
 
         /* ========== STATS SECTION ========== */
         .stats-section {
           background: var(--navy);
-          padding: 60px 16px;
+          padding: 70px 16px;
           position: relative;
         }
 
         @media (max-width: 768px) {
           .stats-section {
-            padding: 50px 16px;
+            padding: 54px 16px;
           }
         }
 
@@ -782,6 +738,12 @@ export function Home() {
           border-radius: 20px;
           padding: 28px 20px;
           text-align: center;
+          transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .stat-card:hover {
+          transform: translateY(-3px);
+          border-color: rgba(255, 255, 255, 0.16);
         }
 
         .stat-card:active {
@@ -825,13 +787,13 @@ export function Home() {
         /* ========== CTA SECTION ========== */
         .cta-section {
           background: linear-gradient(135deg, #EFF6FF 0%, #F5F3FF 100%);
-          padding: 60px 20px;
+          padding: 70px 20px;
           text-align: center;
         }
 
         @media (max-width: 768px) {
           .cta-section {
-            padding: 50px 20px;
+            padding: 54px 20px;
           }
         }
 
@@ -943,6 +905,11 @@ export function Home() {
           font-weight: 600;
           color: var(--electric);
           text-decoration: none;
+          transition: gap 0.2s ease;
+        }
+
+        .link-btn:hover {
+          gap: 10px;
         }
 
         /* Two column layout for desktop */
@@ -984,7 +951,7 @@ export function Home() {
         <div className="container">
           <div className={mounted ? "hero-two-col" : ""} style={{ position: 'relative', zIndex: 2 }}>
             {/* Left side - Text */}
-            <div className="hero-content" style={{ padding: '80px 0 60px' }}>
+            <div className="hero-content">
               <div className="hero-eyebrow">
                 <Star size={12} fill="currentColor" />
                 O'zbekistoning №1 online ta'lim platformasi
@@ -997,7 +964,7 @@ export function Home() {
               </h1>
 
               <p className="hero-sub">
-                Professional IT, Excel va ingliz tili kurslarimiz bilan yangi ko'nikmalar o'rganing. 
+                Professional IT, Excel va ingliz tili kurslarimiz bilan yangi ko'nikmalar o'rganing.
                 5,000+ o'quvchi allaqachon boshlagan — siz ham qo'shiling.
               </p>
 
@@ -1042,7 +1009,7 @@ export function Home() {
                 ))}
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20, gap: 12, flexWrap: 'wrap' }}>
                 <div className="floating-badge">
                   <div style={{ width: 32, height: 32, borderRadius: 10, background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Users size={16} color="#2563EB" />
@@ -1052,7 +1019,7 @@ export function Home() {
                     <div style={{ fontSize: 10, color: '#64748B' }}>bugun qo'shildi</div>
                   </div>
                 </div>
-                <div className="floating-badge">
+                <div className="floating-badge" style={{ animationDelay: '0.4s' }}>
                   <div style={{ width: 32, height: 32, borderRadius: 10, background: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Star size={16} color="#F59E0B" fill="#F59E0B" />
                   </div>
@@ -1061,11 +1028,6 @@ export function Home() {
                     <div style={{ fontSize: 10, color: '#64748B' }}>o'rtacha baho</div>
                   </div>
                 </div>
-              </div>
-
-              {/* HERO ICHIDAGI REKLAMA (BOSILADIGAN) */}
-              <div style={{ marginTop: 16 }}>
-                <AdBanner type="small" />
               </div>
             </div>
           </div>
@@ -1134,76 +1096,60 @@ export function Home() {
           </div>
 
           <div className="courses-grid">
-            {(selectedCategory === 'all' ? featuredCourses : filteredCourses).map((course, idx) => {
-              // Kurslar orasiga reklama qo'shish (2 va 4-kurslar orasiga)
-              const showAd = idx === 1 || idx === 3;
-              const courseElement = (
-                <div
-                  key={course.id}
-                  className="course-card"
-                  style={{
-                    animation: mounted ? `fadeUp 0.5s ease forwards ${idx * 0.05}s` : 'none',
-                    opacity: 0,
-                  }}
-                >
-                  <div className="course-image">
-                    <img src={course.image} alt={course.titleUz} />
-                    <span className={`course-badge ${getCategoryColor(course.category)}`}>
-                      {course.category}
-                    </span>
-                    <span className={`course-level ${getLevelBadge(course.level)}`}>
-                      {getLevelName(course.level)}
-                    </span>
-                    <div className="coming-soon-overlay">
-                      <div>
-                        <div className="coming-soon-badge">
-                          <Clock className="w-3.5 h-3.5" />
-                          Tez orada
-                        </div>
-                        <p style={{ color: 'white', fontSize: 11 }}>Darslar tayyorlanmoqda</p>
+            {(selectedCategory === 'all' ? featuredCourses : filteredCourses).map((course, idx) => (
+              <div
+                key={course.id}
+                className="course-card"
+                style={{
+                  animation: mounted ? `fadeUp 0.5s ease forwards ${idx * 0.05}s` : 'none',
+                  opacity: 0,
+                }}
+              >
+                <div className="course-image">
+                  <img src={course.image} alt={course.titleUz} />
+                  <span className={`course-badge ${getCategoryColor(course.category)}`}>
+                    {course.category}
+                  </span>
+                  <span className={`course-level ${getLevelBadge(course.level)}`}>
+                    {getLevelName(course.level)}
+                  </span>
+                  <div className="coming-soon-overlay">
+                    <div>
+                      <div className="coming-soon-badge">
+                        <Clock className="w-3.5 h-3.5" />
+                        Tez orada
                       </div>
-                    </div>
-                  </div>
-                  <div className="course-content">
-                    <h3 className="course-title">{course.titleUz}</h3>
-                    <p className="course-desc">{course.descriptionUz}</p>
-                    <div className="course-meta">
-                      <div className="course-meta-item">
-                        <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                        <span>{course.rating}</span>
-                      </div>
-                      <div className="course-meta-item">
-                        <Users className="w-3 h-3" />
-                        <span>{course.students.toLocaleString()}</span>
-                      </div>
-                      <div className="course-meta-item">
-                        <Clock className="w-3 h-3" />
-                        <span>{course.duration}</span>
-                      </div>
-                    </div>
-                    <div className="course-footer">
-                      <div>
-                        <span className="course-price">{course.price.toLocaleString()} so'm</span>
-                        <span className="course-badge-soon">(Tez orada)</span>
-                      </div>
-                      <button className="btn-sm" onClick={(e) => e.preventDefault()}>Ko'rish</button>
+                      <p style={{ color: 'white', fontSize: 11 }}>Darslar tayyorlanmoqda</p>
                     </div>
                   </div>
                 </div>
-              );
-
-              // Reklama qo'shish (BOSILADIGAN)
-              if (showAd && selectedCategory === 'all') {
-                return [
-                  courseElement,
-                  <div key={`ad-${idx}`} style={{ animation: mounted ? `fadeUp 0.5s ease forwards ${idx * 0.05 + 0.1}s` : 'none', opacity: 0 }}>
-                    <AdBanner type="medium" />
+                <div className="course-content">
+                  <h3 className="course-title">{course.titleUz}</h3>
+                  <p className="course-desc">{course.descriptionUz}</p>
+                  <div className="course-meta">
+                    <div className="course-meta-item">
+                      <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                      <span>{course.rating}</span>
+                    </div>
+                    <div className="course-meta-item">
+                      <Users className="w-3 h-3" />
+                      <span>{course.students.toLocaleString()}</span>
+                    </div>
+                    <div className="course-meta-item">
+                      <Clock className="w-3 h-3" />
+                      <span>{course.duration}</span>
+                    </div>
                   </div>
-                ];
-              }
-
-              return courseElement;
-            })}
+                  <div className="course-footer">
+                    <div>
+                      <span className="course-price">{course.price.toLocaleString()} so'm</span>
+                      <span className="course-badge-soon">(Tez orada)</span>
+                    </div>
+                    <button className="btn-sm" disabled onClick={(e) => e.preventDefault()}>Ko'rish</button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -1232,11 +1178,6 @@ export function Home() {
                 </div>
               );
             })}
-          </div>
-
-          {/* STATLAR OSTIDAGI REKLAMA (BOSILADIGAN) */}
-          <div style={{ marginTop: 40 }}>
-            <AdBanner type="large" />
           </div>
         </div>
       </section>

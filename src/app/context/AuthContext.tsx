@@ -18,6 +18,8 @@ interface AuthContextType {
   enrollCourse: (courseId: string) => void;
   updateProgress: (courseId: string, lessonId: string, testScore?: number) => void;
   issueCertificate: (courseId: string) => void;
+  checkEmailExists: (email: string) => boolean;
+  resetPassword: (email: string, newPassword: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -159,8 +161,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('lms_user', JSON.stringify(updatedUser));
   };
 
+  // Parolni tiklash uchun: email bazada bor-yo'qligini tekshiradi
+  const checkEmailExists = (email: string): boolean => {
+    const storedUsers = localStorage.getItem('lms_users');
+    const users = storedUsers ? JSON.parse(storedUsers) : [];
+    return users.some((u: any) => u.email === email);
+  };
+
+  // Email topilsa, o'sha foydalanuvchining parolini yangilaydi
+  const resetPassword = (email: string, newPassword: string): boolean => {
+    const storedUsers = localStorage.getItem('lms_users');
+    const users = storedUsers ? JSON.parse(storedUsers) : [];
+
+    const userIndex = users.findIndex((u: any) => u.email === email);
+    if (userIndex === -1) {
+      return false;
+    }
+
+    users[userIndex] = { ...users[userIndex], password: newPassword };
+    localStorage.setItem('lms_users', JSON.stringify(users));
+
+    // Agar shu foydalanuvchi hozir tizimga kirgan bo'lsa, sessiyasini yangilash shart emas,
+    // chunki parol saqlanmaydi (login paytida solishtiriladi).
+    return true;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, enrollCourse, updateProgress, issueCertificate }}>
+    <AuthContext.Provider value={{ user, login, register, logout, enrollCourse, updateProgress, issueCertificate, checkEmailExists, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

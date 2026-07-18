@@ -9,6 +9,8 @@ import { TestPage } from "./pages/TestPage";
 import { Payment } from "./pages/Payment";
 import { Certificate } from "./pages/Certificate";
 import { Games } from "./pages/Games"; // Qo'shildi
+import { ForgotPassword } from './pages/ForgotPassword';
+
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +33,10 @@ export const router = createBrowserRouter([
     path: "/courses",
     Component: Courses,
   },
+  {
+  path: '/forgot-password',
+  element: <ForgotPassword />,
+},
   {
     path: "/course/:courseId",
     Component: CourseDetail,
