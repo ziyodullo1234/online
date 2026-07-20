@@ -3,39 +3,41 @@ import { useState, useEffect, useRef } from 'react';
 import { Header } from '../components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { 
-  Keyboard, 
-  Brain, 
-  Calculator, 
-  Clock, 
-  Target, 
-  Zap, 
-  Award, 
+import {
+  Keyboard,
+  Brain,
+  Calculator,
+  Clock,
+  Target,
+  Zap,
+  Award,
   RefreshCw,
   ChevronRight,
   TrendingUp,
-  BarChart3,
   Gamepad2,
   Lightbulb,
-  Puzzle,
-  Eye,
   MemoryStick,
   Shuffle,
   Flame,
-  Dice6,
-  Timer
+  Palette,
+  ListOrdered,
 } from 'lucide-react';
 
 // ----------------------------------------------------
-// GLOBAL REKLAMA FUNKSIYASI
+// Shared helpers
 // ----------------------------------------------------
-const triggerAd = () => {
-  try {
-    // Siz bergan reklama havolasi yangi oynada ochiladi
-    window.open('https://viiukuhe.com/dc/?blockID=426903', '_blank');
-  } catch (error) {
-    console.error("Reklama ochilmadi:", error);
-  }
+const StatPill = ({ label, value, tone = 'indigo' }: { label: string; value: string | number; tone?: 'indigo' | 'green' | 'blue' | 'amber' }) => {
+  const tones: Record<string, string> = {
+    indigo: 'bg-indigo-50 text-indigo-700',
+    green: 'bg-emerald-50 text-emerald-700',
+    blue: 'bg-sky-50 text-sky-700',
+    amber: 'bg-amber-50 text-amber-700',
+  };
+  return (
+    <div className={`px-3 py-1.5 rounded-full text-xs font-semibold ${tones[tone]}`}>
+      {label}: <span className="font-bold">{value}</span>
+    </div>
+  );
 };
 
 // 1. Typing test component
@@ -72,6 +74,7 @@ function TypingTest() {
       finishTest();
     }
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, timeLeft]);
 
   const resetTest = () => {
@@ -86,7 +89,6 @@ function TypingTest() {
   };
 
   const startTest = () => {
-    triggerAd(); // 💰 REKLAMA
     setIsActive(true);
     inputRef.current?.focus();
   };
@@ -118,13 +120,13 @@ function TypingTest() {
 
   const getCharacterClass = (index: number) => {
     if (index >= userInput.length) return 'text-gray-400';
-    if (userInput[index] === text[index]) return 'text-green-600 bg-green-50';
+    if (userInput[index] === text[index]) return 'text-emerald-600 bg-emerald-50';
     return 'text-red-600 bg-red-50';
   };
 
   return (
-    <Card className="border-0 shadow-lg rounded-2xl">
-      <CardHeader className="border-b border-gray-100">
+    <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+      <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white">
         <CardTitle className="flex items-center gap-2">
           <Keyboard className="w-5 h-5 text-indigo-600" />
           Tez yozish testi
@@ -132,10 +134,10 @@ function TypingTest() {
       </CardHeader>
       <CardContent className="p-6">
         {!isActive && !isFinished && (
-          <div className="text-center py-8">
+          <div className="text-center py-10">
             <p className="text-gray-500 mb-4">30 soniyada berilgan matnni iloji boricha tez va xatosiz yozing</p>
-            {bestWpm > 0 && <p className="text-sm text-indigo-600 mb-4">Eng yaxshi natija: {bestWpm} WPM</p>}
-            <Button onClick={startTest} className="bg-indigo-600 hover:bg-indigo-700">
+            {bestWpm > 0 && <div className="flex justify-center mb-4"><StatPill label="Eng yaxshi" value={`${bestWpm} WPM`} /></div>}
+            <Button onClick={startTest} className="bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200">
               <Zap className="w-4 h-4 mr-2" />
               Testni boshlash
             </Button>
@@ -149,7 +151,7 @@ function TypingTest() {
                 <span className={`font-mono text-xl font-bold ${timeLeft <= 5 ? 'text-red-600' : 'text-indigo-600'}`}>{timeLeft}</span>
                 <span className="text-gray-500">soniya</span>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => { triggerAd(); resetTest(); }}><RefreshCw className="w-4 h-4" /></Button>
+              <Button variant="ghost" size="sm" onClick={resetTest}><RefreshCw className="w-4 h-4" /></Button>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg mb-4 max-h-32 overflow-y-auto">
               <div className="text-lg leading-relaxed">
@@ -164,10 +166,10 @@ function TypingTest() {
             <div className="inline-flex items-center justify-center w-20 h-20 bg-indigo-100 rounded-full mb-4"><Award className="w-10 h-10 text-indigo-600" /></div>
             <h3 className="text-xl font-bold mb-4">Test yakunlandi!</h3>
             <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto mb-6">
-              <div className="bg-green-50 p-4 rounded-lg"><div className="text-2xl font-bold text-green-600">{wpm}</div><div className="text-sm text-gray-500">WPM</div></div>
-              <div className="bg-blue-50 p-4 rounded-lg"><div className="text-2xl font-bold text-blue-600">{accuracy}%</div><div className="text-sm text-gray-500">Aniqlik</div></div>
+              <div className="bg-emerald-50 p-4 rounded-lg"><div className="text-2xl font-bold text-emerald-600">{wpm}</div><div className="text-sm text-gray-500">WPM</div></div>
+              <div className="bg-sky-50 p-4 rounded-lg"><div className="text-2xl font-bold text-sky-600">{accuracy}%</div><div className="text-sm text-gray-500">Aniqlik</div></div>
             </div>
-            <Button onClick={() => { triggerAd(); resetTest(); }} className="bg-indigo-600 hover:bg-indigo-700"><RefreshCw className="w-4 h-4 mr-2" />Yangi test</Button>
+            <Button onClick={resetTest} className="bg-indigo-600 hover:bg-indigo-700"><RefreshCw className="w-4 h-4 mr-2" />Yangi test</Button>
           </div>
         )}
       </CardContent>
@@ -200,7 +202,6 @@ function MathQuiz() {
   };
 
   const startQuiz = () => {
-    triggerAd(); // 💰 REKLAMA
     setQuestions(generateQuestions());
     setCurrentIndex(0);
     setScore(0);
@@ -219,6 +220,7 @@ function MathQuiz() {
       handleNextQuestion(true);
     }
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, timeLeft, currentIndex]);
 
   const handleNextQuestion = (isTimeout: boolean = false) => {
@@ -252,12 +254,12 @@ function MathQuiz() {
 
   if (!isActive && !isFinished) {
     return (
-      <Card className="border-0 shadow-lg rounded-2xl">
-        <CardHeader className="border-b border-gray-100"><CardTitle className="flex items-center gap-2"><Calculator className="w-5 h-5 text-indigo-600" />Matematik test</CardTitle></CardHeader>
-        <CardContent className="p-6 text-center">
+      <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+        <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white"><CardTitle className="flex items-center gap-2"><Calculator className="w-5 h-5 text-indigo-600" />Matematik test</CardTitle></CardHeader>
+        <CardContent className="p-6 text-center py-10">
           <p className="text-gray-500 mb-4">10 ta savol, har biriga 15 soniya vaqtingiz bor</p>
-          {bestScore > 0 && <p className="text-sm text-indigo-600 mb-4">Eng yaxshi natija: {bestScore} ball</p>}
-          <Button onClick={startQuiz} className="bg-indigo-600 hover:bg-indigo-700"><Brain className="w-4 h-4 mr-2" />Testni boshlash</Button>
+          {bestScore > 0 && <div className="flex justify-center mb-4"><StatPill label="Eng yaxshi" value={`${bestScore} ball`} /></div>}
+          <Button onClick={startQuiz} className="bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200"><Brain className="w-4 h-4 mr-2" />Testni boshlash</Button>
         </CardContent>
       </Card>
     );
@@ -267,16 +269,16 @@ function MathQuiz() {
     const percentage = (score / 100) * 100;
     const grade = percentage >= 80 ? "A'lo" : percentage >= 60 ? "Yaxshi" : percentage >= 40 ? "Qoniqarli" : "Yomon";
     return (
-      <Card className="border-0 shadow-lg rounded-2xl">
-        <CardHeader className="border-b border-gray-100"><CardTitle className="flex items-center gap-2"><Calculator className="w-5 h-5 text-indigo-600" />Natijalar</CardTitle></CardHeader>
+      <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+        <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white"><CardTitle className="flex items-center gap-2"><Calculator className="w-5 h-5 text-indigo-600" />Natijalar</CardTitle></CardHeader>
         <CardContent className="p-6 text-center">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-indigo-100 rounded-full mb-4"><TrendingUp className="w-10 h-10 text-indigo-600" /></div>
           <h3 className="text-xl font-bold mb-4">Sizning natijangiz</h3>
           <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto mb-6">
-            <div className="bg-green-50 p-4 rounded-lg"><div className="text-2xl font-bold text-green-600">{score}</div><div className="text-sm text-gray-500">Ball</div></div>
-            <div className="bg-blue-50 p-4 rounded-lg"><div className="text-2xl font-bold text-blue-600">{percentage}%</div><div className="text-sm text-gray-500">Foiz</div></div>
+            <div className="bg-emerald-50 p-4 rounded-lg"><div className="text-2xl font-bold text-emerald-600">{score}</div><div className="text-sm text-gray-500">Ball</div></div>
+            <div className="bg-sky-50 p-4 rounded-lg"><div className="text-2xl font-bold text-sky-600">{percentage}%</div><div className="text-sm text-gray-500">Foiz</div></div>
           </div>
-          <div className="mb-6"><span className={`px-4 py-2 rounded-full text-sm font-semibold ${grade === "A'lo" ? 'bg-green-100 text-green-700' : grade === "Yaxshi" ? 'bg-blue-100 text-blue-700' : grade === "Qoniqarli" ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{grade}</span></div>
+          <div className="mb-6"><span className={`px-4 py-2 rounded-full text-sm font-semibold ${grade === "A'lo" ? 'bg-emerald-100 text-emerald-700' : grade === "Yaxshi" ? 'bg-sky-100 text-sky-700' : grade === "Qoniqarli" ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>{grade}</span></div>
           <Button onClick={startQuiz} className="bg-indigo-600 hover:bg-indigo-700"><RefreshCw className="w-4 h-4 mr-2" />Qayta boshlash</Button>
         </CardContent>
       </Card>
@@ -286,8 +288,8 @@ function MathQuiz() {
   const currentQ = questions[currentIndex];
   const progress = ((currentIndex + 1) / questions.length) * 100;
   return (
-    <Card className="border-0 shadow-lg rounded-2xl">
-      <CardHeader className="border-b border-gray-100">
+    <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+      <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white">
         <div className="flex justify-between items-center">
           <CardTitle className="flex items-center gap-2"><Calculator className="w-5 h-5 text-indigo-600" />Matematik test</CardTitle>
           <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-gray-500" /><span className={`font-mono text-xl font-bold ${timeLeft <= 5 ? 'text-red-600' : 'text-indigo-600'}`}>{timeLeft}</span><span className="text-gray-500">soniya</span></div>
@@ -296,7 +298,7 @@ function MathQuiz() {
       <CardContent className="p-6">
         <div className="mb-4"><div className="flex justify-between text-sm text-gray-500 mb-2"><span>Savol {currentIndex + 1} / {questions.length}</span><span>Ball: {score}</span></div><div className="w-full bg-gray-200 rounded-full h-2"><div className="bg-indigo-600 h-2 rounded-full transition-all" style={{ width: `${progress}%` }}></div></div></div>
         <div className="text-center py-8"><h3 className="text-2xl font-bold mb-6">{currentQ.question}</h3><input ref={inputRef} type="number" value={currentQ.userAnswer} onChange={handleAnswerChange} onKeyPress={handleKeyPress} className="w-32 text-center text-xl p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mx-auto" placeholder="?" autoFocus /></div>
-        <div className="flex justify-center gap-3"><Button onClick={() => { triggerAd(); handleNextQuestion(false); }} className="bg-indigo-600 hover:bg-indigo-700">Keyingi savol<ChevronRight className="w-4 h-4 ml-2" /></Button></div>
+        <div className="flex justify-center gap-3"><Button onClick={() => handleNextQuestion(false)} className="bg-indigo-600 hover:bg-indigo-700">Keyingi savol<ChevronRight className="w-4 h-4 ml-2" /></Button></div>
       </CardContent>
     </Card>
   );
@@ -317,10 +319,10 @@ function MemoryGame() {
     startNewGame();
     const savedBest = localStorage.getItem('bestMemoryMoves');
     if (savedBest) setBestMoves(parseInt(savedBest));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startNewGame = () => {
-    triggerAd(); // 💰 REKLAMA
     const shuffledCards = [...emojis, ...emojis]
       .sort(() => Math.random() - 0.5)
       .map((emoji, index) => ({ id: index, emoji, isFlipped: false, isMatched: false }));
@@ -332,7 +334,7 @@ function MemoryGame() {
   };
 
   const handleCardClick = (index: number) => {
-    if (cards[index].isMatched || cards[index].isFlipped || isGameComplete) return;
+    if (cards[index].isMatched || cards[index].isFlipped || isGameComplete || selectedIndex !== null && cards[selectedIndex] === undefined) return;
     if (selectedIndex === null) {
       const newCards = [...cards];
       newCards[index].isFlipped = true;
@@ -341,53 +343,59 @@ function MemoryGame() {
     } else {
       const newCards = [...cards];
       newCards[index].isFlipped = true;
-      setCards(newCards);
-      setMoves(moves + 1);
+      const newMoves = moves + 1;
+      setMoves(newMoves);
       if (cards[selectedIndex].emoji === cards[index].emoji) {
         newCards[selectedIndex].isMatched = true;
         newCards[index].isMatched = true;
-        setMatchedPairs(matchedPairs + 1);
+        const newMatched = matchedPairs + 1;
+        setMatchedPairs(newMatched);
+        setCards(newCards);
         setSelectedIndex(null);
-        if (matchedPairs + 1 === emojis.length) {
+        if (newMatched === emojis.length) {
           setIsGameComplete(true);
-          const finalMoves = moves + 1;
-          if (bestMoves === 0 || finalMoves < bestMoves) {
-            setBestMoves(finalMoves);
-            localStorage.setItem('bestMemoryMoves', finalMoves.toString());
+          if (bestMoves === 0 || newMoves < bestMoves) {
+            setBestMoves(newMoves);
+            localStorage.setItem('bestMemoryMoves', newMoves.toString());
           }
         }
       } else {
+        setCards(newCards);
         setTimeout(() => {
-          const resetCards = [...cards];
-          resetCards[selectedIndex].isFlipped = false;
-          resetCards[index].isFlipped = false;
-          setCards(resetCards);
+          setCards(prev => {
+            const resetCards = [...prev];
+            resetCards[selectedIndex].isFlipped = false;
+            resetCards[index].isFlipped = false;
+            return resetCards;
+          });
           setSelectedIndex(null);
-        }, 1000);
+        }, 800);
       }
-      setCards(newCards);
-      setSelectedIndex(null);
     }
   };
 
   return (
-    <Card className="border-0 shadow-lg rounded-2xl">
-      <CardHeader className="border-b border-gray-100">
+    <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+      <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white">
         <CardTitle className="flex items-center gap-2"><MemoryStick className="w-5 h-5 text-indigo-600" />Xotira o'yini</CardTitle>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="flex justify-between mb-4"><div className="text-gray-600">Harakatlar: {moves}</div><div className="text-gray-600">Topilgan juftliklar: {matchedPairs}/{emojis.length}</div><div className="text-indigo-600">Eng yaxshi: {bestMoves || '-'}</div></div>
-        {isGameComplete && <div className="text-center mb-4 p-4 bg-green-100 rounded-lg"><Award className="w-8 h-8 text-green-600 mx-auto mb-2" /><h3 className="text-lg font-bold text-green-700">Tabriklaymiz!</h3><p className="text-green-600">{moves} ta harakatda o'yinni tugatdingiz!</p><Button onClick={startNewGame} className="mt-2 bg-green-600 hover:bg-green-700">Yangi o'yin</Button></div>}
+        <div className="flex flex-wrap gap-2 justify-between mb-4">
+          <StatPill label="Harakatlar" value={moves} />
+          <StatPill label="Juftliklar" value={`${matchedPairs}/${emojis.length}`} tone="blue" />
+          <StatPill label="Eng yaxshi" value={bestMoves || '-'} tone="amber" />
+        </div>
+        {isGameComplete && <div className="text-center mb-4 p-4 bg-emerald-50 rounded-xl"><Award className="w-8 h-8 text-emerald-600 mx-auto mb-2" /><h3 className="text-lg font-bold text-emerald-700">Tabriklaymiz!</h3><p className="text-emerald-600">{moves} ta harakatda o'yinni tugatdingiz!</p><Button onClick={startNewGame} className="mt-2 bg-emerald-600 hover:bg-emerald-700">Yangi o'yin</Button></div>}
         {!isGameComplete && (
           <div className="grid grid-cols-4 gap-3">
             {cards.map((card, index) => (
-              <button key={card.id} onClick={() => handleCardClick(index)} className={`aspect-square text-3xl rounded-xl transition-all duration-300 ${card.isMatched ? 'bg-green-100' : card.isFlipped ? 'bg-indigo-100 shadow-md' : 'bg-gray-100 hover:bg-gray-200'} flex items-center justify-center`}>
+              <button key={card.id} onClick={() => handleCardClick(index)} className={`aspect-square text-3xl rounded-xl transition-all duration-300 ${card.isMatched ? 'bg-emerald-100 scale-95' : card.isFlipped ? 'bg-indigo-100 shadow-md scale-105' : 'bg-gray-100 hover:bg-gray-200'} flex items-center justify-center`}>
                 {(card.isFlipped || card.isMatched) ? card.emoji : '?'}
               </button>
             ))}
           </div>
         )}
-        {!isGameComplete && matchedPairs !== emojis.length && <div className="mt-4 text-center"><Button variant="outline" onClick={startNewGame}>Yangi o'yin</Button></div>}
+        {!isGameComplete && <div className="mt-4 text-center"><Button variant="outline" onClick={startNewGame}>Yangi o'yin</Button></div>}
       </CardContent>
     </Card>
   );
@@ -407,7 +415,6 @@ function ReactionGame() {
   }, []);
 
   const startGame = () => {
-    triggerAd(); // 💰 REKLAMA
     setGameState('waiting');
     const delay = Math.random() * 3000 + 2000;
     const id = setTimeout(() => {
@@ -441,21 +448,21 @@ function ReactionGame() {
   };
 
   return (
-    <Card className="border-0 shadow-lg rounded-2xl">
-      <CardHeader className="border-b border-gray-100">
+    <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+      <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white">
         <CardTitle className="flex items-center gap-2"><Zap className="w-5 h-5 text-indigo-600" />Reaksiya tezligi</CardTitle>
       </CardHeader>
       <CardContent className="p-6 text-center">
-        <div className="mb-4 text-indigo-600">Eng yaxshi vaqt: {bestTime > 0 ? `${bestTime}ms` : '-'}</div>
-        <div onClick={handleClick} className={`h-64 rounded-xl cursor-pointer transition-all flex items-center justify-center text-2xl font-bold ${gameState === 'idle' ? 'bg-gray-100 text-gray-400' : gameState === 'waiting' ? 'bg-yellow-100 text-yellow-600' : gameState === 'ready' ? 'bg-green-500 text-white animate-pulse' : 'bg-red-100 text-red-600'}`}>
+        <div className="flex justify-center mb-4"><StatPill label="Eng yaxshi" value={bestTime > 0 ? `${bestTime}ms` : '-'} /></div>
+        <div onClick={handleClick} className={`h-64 rounded-xl cursor-pointer transition-all flex items-center justify-center text-2xl font-bold select-none ${gameState === 'idle' ? 'bg-gray-100 text-gray-400' : gameState === 'waiting' ? 'bg-amber-100 text-amber-600' : gameState === 'ready' ? 'bg-emerald-500 text-white animate-pulse' : 'bg-red-50 text-red-600'}`}>
           {gameState === 'idle' && 'Boshlash uchun bosing'}
           {gameState === 'waiting' && 'Kuting... Yashil rangni kuting!'}
           {gameState === 'ready' && 'BOSING!!!'}
-          {gameState === 'gameover' && reactionTime === -1 ? 'Juda erta bosdingiz!' : gameState === 'gameover' ? `${reactionTime}ms` : ''}
+          {gameState === 'gameover' && (reactionTime === -1 ? 'Juda erta bosdingiz!' : `${reactionTime}ms`)}
         </div>
         <div className="mt-4 flex gap-3 justify-center">
-          {gameState === 'idle' && <Button onClick={startGame} className="bg-indigo-600 hover:bg-indigo-700">Boshlash</Button>}
-          {gameState === 'gameover' && <Button onClick={() => { triggerAd(); resetGame(); }} className="bg-indigo-600 hover:bg-indigo-700">Qayta o'ynash</Button>}
+          {gameState === 'idle' && <Button onClick={startGame} className="bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200">Boshlash</Button>}
+          {gameState === 'gameover' && <Button onClick={resetGame} className="bg-indigo-600 hover:bg-indigo-700">Qayta o'ynash</Button>}
         </div>
       </CardContent>
     </Card>
@@ -475,10 +482,10 @@ function NumberGuessingGame() {
     startNewGame();
     const savedBest = localStorage.getItem('bestGuessAttempts');
     if (savedBest) setBestAttempts(parseInt(savedBest));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startNewGame = () => {
-    triggerAd(); // 💰 REKLAMA
     setSecretNumber(Math.floor(Math.random() * 100) + 1);
     setGuess('');
     setMessage('1 dan 100 gacha son o\'yladim. Toping!');
@@ -505,15 +512,15 @@ function NumberGuessingGame() {
   };
 
   return (
-    <Card className="border-0 shadow-lg rounded-2xl">
-      <CardHeader className="border-b border-gray-100">
+    <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+      <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white">
         <CardTitle className="flex items-center gap-2"><Target className="w-5 h-5 text-indigo-600" />Son topish o'yini</CardTitle>
       </CardHeader>
       <CardContent className="p-6 text-center">
-        <div className="mb-4 text-indigo-600">Eng yaxshi natija: {bestAttempts > 0 ? `${bestAttempts} ta urinish` : '-'}</div>
+        <div className="flex justify-center mb-4"><StatPill label="Eng yaxshi" value={bestAttempts > 0 ? `${bestAttempts} ta urinish` : '-'} /></div>
         <div className="bg-gray-50 p-6 rounded-lg mb-4"><p className="text-gray-600">{message}</p></div>
         {!isGameOver && (
-          <div className="flex gap-3 justify-center"><input type="number" value={guess} onChange={(e) => setGuess(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleGuess()} className="w-32 text-center p-2 border border-gray-200 rounded-lg" placeholder="Son" autoFocus /><Button onClick={handleGuess} className="bg-indigo-600 hover:bg-indigo-700">Tekshirish</Button></div>
+          <div className="flex gap-3 justify-center"><input type="number" value={guess} onChange={(e) => setGuess(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleGuess()} className="w-32 text-center p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Son" autoFocus /><Button onClick={handleGuess} className="bg-indigo-600 hover:bg-indigo-700">Tekshirish</Button></div>
         )}
         {isGameOver && <Button onClick={startNewGame} className="bg-indigo-600 hover:bg-indigo-700">Yangi o'yin</Button>}
       </CardContent>
@@ -535,9 +542,17 @@ function WordScramble() {
     loadNewWord();
     const savedBest = localStorage.getItem('bestScrambleScore');
     if (savedBest) setBestScore(parseInt(savedBest));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const scrambleWord = (word: string) => word.split('').sort(() => Math.random() - 0.5).join('');
+  const scrambleWord = (word: string) => {
+    let scrambled = word;
+    // avoid accidentally returning the original word
+    while (scrambled === word) {
+      scrambled = word.split('').sort(() => Math.random() - 0.5).join('');
+    }
+    return scrambled;
+  };
 
   const loadNewWord = () => {
     const newWord = words[Math.floor(Math.random() * words.length)];
@@ -553,7 +568,6 @@ function WordScramble() {
       setScore(newScore);
       setMessage('✅ To\'g\'ri! +10 ball');
       if (newScore > bestScore) { setBestScore(newScore); localStorage.setItem('bestScrambleScore', newScore.toString()); }
-      triggerAd(); // 💰 To'g'ri topsa reklamani ochamiz va yangi so'zni yuklaymiz
       loadNewWord();
     } else {
       setMessage('❌ Noto\'g\'ri! Qaytadan urinib ko\'ring');
@@ -562,15 +576,15 @@ function WordScramble() {
   };
 
   return (
-    <Card className="border-0 shadow-lg rounded-2xl">
-      <CardHeader className="border-b border-gray-100">
+    <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+      <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white">
         <CardTitle className="flex items-center gap-2"><Shuffle className="w-5 h-5 text-indigo-600" />So'z topish o'yini</CardTitle>
       </CardHeader>
       <CardContent className="p-6 text-center">
-        <div className="flex justify-between mb-4"><div className="text-gray-600">Ball: {score}</div><div className="text-indigo-600">Eng yaxshi: {bestScore}</div></div>
+        <div className="flex justify-center gap-2 mb-4"><StatPill label="Ball" value={score} /><StatPill label="Eng yaxshi" value={bestScore} tone="amber" /></div>
         <div className="bg-gray-50 p-8 rounded-lg mb-4"><h3 className="text-2xl font-bold tracking-wider">{scrambledWord}</h3></div>
-        <div className="flex gap-3 justify-center mb-4"><input type="text" value={userGuess} onChange={(e) => setUserGuess(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && checkAnswer()} className="flex-1 max-w-xs p-2 border border-gray-200 rounded-lg" placeholder="So'zni yozing" autoFocus /><Button onClick={checkAnswer} className="bg-indigo-600 hover:bg-indigo-700">Tekshirish</Button></div>
-        {message && <p className={`text-sm ${message.includes('✅') ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
+        <div className="flex gap-3 justify-center mb-4"><input type="text" value={userGuess} onChange={(e) => setUserGuess(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && checkAnswer()} className="flex-1 max-w-xs p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="So'zni yozing" autoFocus /><Button onClick={checkAnswer} className="bg-indigo-600 hover:bg-indigo-700">Tekshirish</Button></div>
+        {message && <p className={`text-sm ${message.includes('✅') ? 'text-emerald-600' : 'text-red-600'}`}>{message}</p>}
       </CardContent>
     </Card>
   );
@@ -597,7 +611,6 @@ function TrueFalseQuiz() {
   }, []);
 
   const handleAnswer = (answer: boolean) => {
-    triggerAd(); // 💰 Har bir savol javobidan keyin reklama ochiladi
     if (questions[currentIndex].answer === answer) {
       const newScore = score + 10;
       setScore(newScore);
@@ -607,12 +620,12 @@ function TrueFalseQuiz() {
     else setIsFinished(true);
   };
 
-  const restartQuiz = () => { triggerAd(); setCurrentIndex(0); setScore(0); setIsFinished(false); };
+  const restartQuiz = () => { setCurrentIndex(0); setScore(0); setIsFinished(false); };
 
   if (isFinished) {
     return (
-      <Card className="border-0 shadow-lg rounded-2xl">
-        <CardHeader className="border-b border-gray-100"><CardTitle className="flex items-center gap-2"><Brain className="w-5 h-5 text-indigo-600" />Natijalar</CardTitle></CardHeader>
+      <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+        <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white"><CardTitle className="flex items-center gap-2"><Brain className="w-5 h-5 text-indigo-600" />Natijalar</CardTitle></CardHeader>
         <CardContent className="p-6 text-center">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-indigo-100 rounded-full mb-4"><Award className="w-10 h-10 text-indigo-600" /></div>
           <h3 className="text-xl font-bold mb-4">Test yakunlandi!</h3>
@@ -625,12 +638,12 @@ function TrueFalseQuiz() {
   }
 
   return (
-    <Card className="border-0 shadow-lg rounded-2xl">
-      <CardHeader className="border-b border-gray-100"><CardTitle className="flex items-center gap-2"><Lightbulb className="w-5 h-5 text-indigo-600" />Mantiqiy savollar</CardTitle></CardHeader>
+    <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+      <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white"><CardTitle className="flex items-center gap-2"><Lightbulb className="w-5 h-5 text-indigo-600" />Mantiqiy savollar</CardTitle></CardHeader>
       <CardContent className="p-6">
         <div className="mb-4"><div className="flex justify-between text-sm text-gray-500"><span>Savol {currentIndex + 1} / {questions.length}</span><span>Ball: {score}</span></div><div className="w-full bg-gray-200 rounded-full h-2"><div className="bg-indigo-600 h-2 rounded-full transition-all" style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}></div></div></div>
         <div className="bg-gray-50 p-8 rounded-lg mb-6 min-h-[150px] flex items-center justify-center"><p className="text-lg text-center">{questions[currentIndex].text}</p></div>
-        <div className="flex gap-4 justify-center"><Button onClick={() => handleAnswer(true)} className="flex-1 bg-green-600 hover:bg-green-700">✅ To'g'ri</Button><Button onClick={() => handleAnswer(false)} className="flex-1 bg-red-600 hover:bg-red-700">❌ Noto'g'ri</Button></div>
+        <div className="flex gap-4 justify-center"><Button onClick={() => handleAnswer(true)} className="flex-1 bg-emerald-600 hover:bg-emerald-700">✅ To'g'ri</Button><Button onClick={() => handleAnswer(false)} className="flex-1 bg-red-600 hover:bg-red-700">❌ Noto'g'ri</Button></div>
       </CardContent>
     </Card>
   );
@@ -653,22 +666,268 @@ function ClickCounter() {
     if (isActive && timeLeft > 0) timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
     else if (timeLeft === 0 && isActive) {
       setIsActive(false);
-      if (clicks > bestClicks) { setBestClicks(clicks); localStorage.setItem('bestClickCount', clicks.toString()); }
+      setClicks(prev => {
+        if (prev > bestClicks) { setBestClicks(prev); localStorage.setItem('bestClickCount', prev.toString()); }
+        return prev;
+      });
     }
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, timeLeft]);
 
-  const startGame = () => { triggerAd(); setClicks(0); setTimeLeft(10); setIsActive(true); };
+  const startGame = () => { setClicks(0); setTimeLeft(10); setIsActive(true); };
   const handleClick = () => { if (isActive) setClicks(clicks + 1); };
 
   return (
-    <Card className="border-0 shadow-lg rounded-2xl">
-      <CardHeader className="border-b border-gray-100"><CardTitle className="flex items-center gap-2"><Flame className="w-5 h-5 text-indigo-600" />Click tezligi</CardTitle></CardHeader>
+    <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+      <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white"><CardTitle className="flex items-center gap-2"><Flame className="w-5 h-5 text-indigo-600" />Click tezligi</CardTitle></CardHeader>
       <CardContent className="p-6 text-center">
-        <div className="flex justify-between mb-4"><div className="text-gray-600">Eng yaxshi: {bestClicks}</div><div className="text-indigo-600">Vaqt: {timeLeft}s</div></div>
-        {!isActive && timeLeft === 10 && <Button onClick={startGame} className="bg-indigo-600 hover:bg-indigo-700">Boshlash</Button>}
-        {isActive && <div onClick={handleClick} className="h-64 bg-indigo-500 rounded-xl flex items-center justify-center cursor-pointer hover:bg-indigo-600 transition-all"><div className="text-center"><div className="text-6xl font-bold text-white mb-2">{clicks}</div><p className="text-white">Bu yerga bosing!</p></div></div>}
+        <div className="flex justify-center gap-2 mb-4"><StatPill label="Eng yaxshi" value={bestClicks} tone="amber" /><StatPill label="Vaqt" value={`${timeLeft}s`} tone="blue" /></div>
+        {!isActive && timeLeft === 10 && <Button onClick={startGame} className="bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200">Boshlash</Button>}
+        {isActive && <div onClick={handleClick} className="h-64 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center cursor-pointer hover:from-indigo-600 hover:to-indigo-700 transition-all select-none active:scale-[0.99]"><div className="text-center"><div className="text-6xl font-bold text-white mb-2">{clicks}</div><p className="text-white">Bu yerga bosing!</p></div></div>}
         {!isActive && timeLeft === 0 && <div><div className="text-4xl font-bold text-indigo-600 mb-4">{clicks} marta</div><Button onClick={startGame} className="bg-indigo-600 hover:bg-indigo-700">Qayta o'ynash</Button></div>}
+      </CardContent>
+    </Card>
+  );
+}
+
+// 9. Stroop Test (Rang-so'z testi) — yangi o'yin
+function StroopTest() {
+  const colorNames = [
+    { name: 'QIZIL', hex: '#dc2626' },
+    { name: "KO'K", hex: '#2563eb' },
+    { name: 'YASHIL', hex: '#16a34a' },
+    { name: 'SARIQ', hex: '#ca8a04' },
+    { name: 'BINAFSHA', hex: '#9333ea' },
+  ];
+  const [round, setRound] = useState<{ word: string; inkHex: string; inkName: string } | null>(null);
+  const [options, setOptions] = useState<string[]>([]);
+  const [score, setScore] = useState(0);
+  const [lives, setLives] = useState(3);
+  const [timeLeft, setTimeLeft] = useState(45);
+  const [isActive, setIsActive] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+  const [bestScore, setBestScore] = useState(0);
+  const [flash, setFlash] = useState<'correct' | 'wrong' | null>(null);
+
+  useEffect(() => {
+    const savedBest = localStorage.getItem('bestStroopScore');
+    if (savedBest) setBestScore(parseInt(savedBest));
+  }, []);
+
+  const newRound = () => {
+    const wordChoice = colorNames[Math.floor(Math.random() * colorNames.length)];
+    let inkChoice = colorNames[Math.floor(Math.random() * colorNames.length)];
+    // sometimes force a mismatch to keep the test meaningful
+    if (Math.random() > 0.15 && inkChoice.name === wordChoice.name) {
+      inkChoice = colorNames[(colorNames.indexOf(inkChoice) + 1) % colorNames.length];
+    }
+    const shuffledOptions = [...colorNames].sort(() => Math.random() - 0.5).map(c => c.name);
+    setRound({ word: wordChoice.name, inkHex: inkChoice.hex, inkName: inkChoice.name });
+    setOptions(shuffledOptions);
+  };
+
+  const startGame = () => {
+    setScore(0);
+    setLives(3);
+    setTimeLeft(45);
+    setIsActive(true);
+    setIsFinished(false);
+    newRound();
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isActive && timeLeft > 0 && lives > 0) {
+      timer = setTimeout(() => setTimeLeft(t => t - 1), 1000);
+    } else if (isActive && (timeLeft === 0 || lives === 0)) {
+      setIsActive(false);
+      setIsFinished(true);
+      setScore(s => {
+        if (s > bestScore) { setBestScore(s); localStorage.setItem('bestStroopScore', s.toString()); }
+        return s;
+      });
+    }
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isActive, timeLeft, lives]);
+
+  const handleAnswer = (chosenName: string) => {
+    if (!isActive || !round) return;
+    if (chosenName === round.inkName) {
+      setScore(s => s + 10);
+      setFlash('correct');
+    } else {
+      setLives(l => l - 1);
+      setFlash('wrong');
+    }
+    setTimeout(() => setFlash(null), 250);
+    newRound();
+  };
+
+  if (!isActive && !isFinished) {
+    return (
+      <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+        <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white"><CardTitle className="flex items-center gap-2"><Palette className="w-5 h-5 text-indigo-600" />Rang-so'z testi</CardTitle></CardHeader>
+        <CardContent className="p-6 text-center py-10">
+          <p className="text-gray-500 mb-2">So'zning ma'nosiga emas, harflar <strong>rangiga</strong> qarab tugmani bosing.</p>
+          <p className="text-gray-400 text-sm mb-4">3 ta jonli, 45 soniya vaqt bor</p>
+          {bestScore > 0 && <div className="flex justify-center mb-4"><StatPill label="Eng yaxshi" value={`${bestScore} ball`} /></div>}
+          <Button onClick={startGame} className="bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200"><Palette className="w-4 h-4 mr-2" />Testni boshlash</Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isFinished) {
+    return (
+      <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+        <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white"><CardTitle className="flex items-center gap-2"><Palette className="w-5 h-5 text-indigo-600" />Natijalar</CardTitle></CardHeader>
+        <CardContent className="p-6 text-center">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-indigo-100 rounded-full mb-4"><Award className="w-10 h-10 text-indigo-600" /></div>
+          <h3 className="text-xl font-bold mb-4">Test yakunlandi!</h3>
+          <div className="text-4xl font-bold text-indigo-600 mb-2">{score} ball</div>
+          <div className="mb-6 text-gray-500">Eng yaxshi natija: {bestScore}</div>
+          <Button onClick={startGame} className="bg-indigo-600 hover:bg-indigo-700"><RefreshCw className="w-4 h-4 mr-2" />Qayta boshlash</Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className={`border-0 shadow-lg rounded-2xl overflow-hidden transition-colors ${flash === 'correct' ? 'ring-2 ring-emerald-400' : flash === 'wrong' ? 'ring-2 ring-red-400' : ''}`}>
+      <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white">
+        <div className="flex justify-between items-center">
+          <CardTitle className="flex items-center gap-2"><Palette className="w-5 h-5 text-indigo-600" />Rang-so'z testi</CardTitle>
+          <div className="flex items-center gap-3">
+            <span className="text-red-500">{'❤️'.repeat(lives)}</span>
+            <div className="flex items-center gap-1"><Clock className="w-4 h-4 text-gray-500" /><span className={`font-mono font-bold ${timeLeft <= 10 ? 'text-red-600' : 'text-indigo-600'}`}>{timeLeft}s</span></div>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="p-6">
+        <div className="text-center mb-3 text-sm text-gray-500">Ball: {score}</div>
+        <div className="bg-gray-50 rounded-lg py-10 mb-6 flex items-center justify-center">
+          {round && <span className="text-4xl font-extrabold tracking-wide" style={{ color: round.inkHex }}>{round.word}</span>}
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {options.map((name) => (
+            <Button key={name} variant="outline" onClick={() => handleAnswer(name)} className="py-6 text-base font-semibold">
+              {name}
+            </Button>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// 10. Sequence Memory (Ketma-ketlikni eslab qolish) — yangi o'yin
+function SequenceMemory() {
+  const padColors = [
+    { id: 0, base: 'bg-red-200', active: 'bg-red-500' },
+    { id: 1, base: 'bg-sky-200', active: 'bg-sky-500' },
+    { id: 2, base: 'bg-emerald-200', active: 'bg-emerald-500' },
+    { id: 3, base: 'bg-amber-200', active: 'bg-amber-500' },
+  ];
+  const [sequence, setSequence] = useState<number[]>([]);
+  const [playerStep, setPlayerStep] = useState(0);
+  const [activePad, setActivePad] = useState<number | null>(null);
+  const [status, setStatus] = useState<'idle' | 'showing' | 'input' | 'gameover'>('idle');
+  const [level, setLevel] = useState(0);
+  const [bestLevel, setBestLevel] = useState(0);
+
+  useEffect(() => {
+    const savedBest = localStorage.getItem('bestSequenceLevel');
+    if (savedBest) setBestLevel(parseInt(savedBest));
+  }, []);
+
+  const playSequence = async (seq: number[]) => {
+    setStatus('showing');
+    for (let i = 0; i < seq.length; i++) {
+      await new Promise(res => setTimeout(res, 450));
+      setActivePad(seq[i]);
+      await new Promise(res => setTimeout(res, 350));
+      setActivePad(null);
+    }
+    setPlayerStep(0);
+    setStatus('input');
+  };
+
+  const startGame = () => {
+    const first = [Math.floor(Math.random() * 4)];
+    setSequence(first);
+    setLevel(1);
+    setStatus('idle');
+    setTimeout(() => playSequence(first), 300);
+  };
+
+  const handlePadClick = (id: number) => {
+    if (status !== 'input') return;
+    if (id === sequence[playerStep]) {
+      if (playerStep + 1 === sequence.length) {
+        const nextLevel = level + 1;
+        const nextSeq = [...sequence, Math.floor(Math.random() * 4)];
+        setSequence(nextSeq);
+        setLevel(nextLevel);
+        setStatus('idle');
+        setTimeout(() => playSequence(nextSeq), 600);
+      } else {
+        setPlayerStep(playerStep + 1);
+      }
+    } else {
+      setStatus('gameover');
+      const finalLevel = level - 1;
+      if (finalLevel > bestLevel) {
+        setBestLevel(finalLevel);
+        localStorage.setItem('bestSequenceLevel', finalLevel.toString());
+      }
+    }
+  };
+
+  return (
+    <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+      <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white">
+        <CardTitle className="flex items-center gap-2"><ListOrdered className="w-5 h-5 text-indigo-600" />Ketma-ketlikni eslab qolish</CardTitle>
+      </CardHeader>
+      <CardContent className="p-6 text-center">
+        <div className="flex justify-center gap-2 mb-4">
+          <StatPill label="Daraja" value={status === 'gameover' ? Math.max(level - 1, 0) : level} tone="blue" />
+          <StatPill label="Eng yaxshi" value={bestLevel} tone="amber" />
+        </div>
+
+        {status === 'idle' && level === 0 && (
+          <div className="py-6">
+            <p className="text-gray-500 mb-4">Yonib o'tgan ketma-ketlikni xuddi shu tartibda takrorlang</p>
+            <Button onClick={startGame} className="bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200">Boshlash</Button>
+          </div>
+        )}
+
+        {status === 'gameover' && (
+          <div className="py-4 mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 rounded-full mb-3"><RefreshCw className="w-8 h-8 text-red-500" /></div>
+            <p className="text-gray-700 font-semibold mb-1">O'yin tugadi</p>
+            <p className="text-gray-500 mb-4">Siz {Math.max(level - 1, 0)}-darajaga yetdingiz</p>
+            <Button onClick={startGame} className="bg-indigo-600 hover:bg-indigo-700">Qayta boshlash</Button>
+          </div>
+        )}
+
+        {(status === 'showing' || status === 'input') && (
+          <p className="text-sm text-gray-500 mb-4">{status === 'showing' ? "Ketma-ketlikka diqqat bilan qarang..." : 'Endi navbat sizda!'}</p>
+        )}
+
+        {(status === 'showing' || status === 'input') && (
+          <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto">
+            {padColors.map((pad) => (
+              <button
+                key={pad.id}
+                onClick={() => handlePadClick(pad.id)}
+                disabled={status !== 'input'}
+                className={`h-24 rounded-xl transition-all duration-150 ${activePad === pad.id ? `${pad.active} scale-95 shadow-lg` : pad.base} ${status === 'input' ? 'hover:opacity-80 cursor-pointer' : 'cursor-default'}`}
+              />
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -676,7 +935,7 @@ function ClickCounter() {
 
 // Main Games Page
 export function Games() {
-  const [activeTab, setActiveTab] = useState<'typing' | 'math' | 'memory' | 'reaction' | 'guess' | 'scramble' | 'quiz' | 'clicker'>('typing');
+  const [activeTab, setActiveTab] = useState<'typing' | 'math' | 'memory' | 'reaction' | 'guess' | 'scramble' | 'quiz' | 'clicker' | 'stroop' | 'sequence'>('typing');
 
   const tabs = [
     { id: 'typing', name: 'Tez yozish', icon: Keyboard },
@@ -684,15 +943,12 @@ export function Games() {
     { id: 'memory', name: 'Xotira', icon: MemoryStick },
     { id: 'reaction', name: 'Reaksiya', icon: Zap },
     { id: 'guess', name: 'Son topish', icon: Target },
-    { id: 'scramble', name: 'So\'z topish', icon: Shuffle },
+    { id: 'scramble', name: "So'z topish", icon: Shuffle },
     { id: 'quiz', name: 'Mantiq', icon: Brain },
-    { id: 'clicker', name: 'Click tezligi', icon: Flame }
-  ];
-
-  const handleTabChange = (tabId: any) => {
-    triggerAd(); // 💰 O'yin toifasini o'zgartirganda ham reklama ochiladi
-    setActiveTab(tabId);
-  };
+    { id: 'clicker', name: 'Click tezligi', icon: Flame },
+    { id: 'stroop', name: 'Rang-so\'z', icon: Palette },
+    { id: 'sequence', name: 'Ketma-ketlik', icon: ListOrdered },
+  ] as const;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
@@ -713,10 +969,10 @@ export function Games() {
             return (
               <button
                 key={tab.id}
-                onClick={() => handleTabChange(tab.id)}
+                onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   activeTab === tab.id
-                    ? 'bg-indigo-600 text-white shadow-md'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
                     : 'text-gray-600 hover:bg-gray-50'
                 }`}
               >
@@ -737,6 +993,8 @@ export function Games() {
           {activeTab === 'scramble' && <WordScramble />}
           {activeTab === 'quiz' && <TrueFalseQuiz />}
           {activeTab === 'clicker' && <ClickCounter />}
+          {activeTab === 'stroop' && <StroopTest />}
+          {activeTab === 'sequence' && <SequenceMemory />}
         </div>
       </div>
     </div>
