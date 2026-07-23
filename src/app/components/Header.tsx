@@ -1,19 +1,38 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/button';
-import { User, BookOpen, LogOut, Gamepad2, Menu, X } from 'lucide-react';
+import { User, BookOpen, LogOut, Gamepad2, Menu, X, ArrowRight } from 'lucide-react';
 
 const navItems = [
   { to: '/', label: 'Bosh sahifa' },
   { to: '/courses', label: 'Kurslar' },
-  { to: '/games', label: "O'yinlar", icon: Gamepad2 },
+  { to: '/games', label: "O'yinlar", icon: Gamepad2, badge: true },
 ];
+
+const INK = '#16233F';
+const PAPER = '#FBFAF6';
+const TEAL = '#0E7C7B';
+const AMBER = '#E2A63B';
+const LINE = '#E7E2D6';
+const TINT = '#F1EDE3';
 
 export function Header() {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
 
   const isActive = (path: string) => (path === '/' ? location.pathname === '/' : location.pathname.startsWith(path));
 
@@ -26,15 +45,56 @@ export function Header() {
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-md">
+    <header
+      className="sticky top-0 z-50 transition-colors duration-300"
+      style={{
+        backgroundColor: scrolled ? `${PAPER}E6` : `${PAPER}B3`,
+        backdropFilter: 'blur(10px)',
+        borderBottom: `1px ${scrolled ? 'solid' : 'dashed'} ${LINE}`,
+        boxShadow: scrolled ? `0 1px 0 ${LINE}, 0 8px 20px -12px rgba(22,35,63,0.18)` : 'none',
+      }}
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap');
+        .brand-font { font-family: 'Fraunces', Georgia, serif; }
+        .stamp-btn {
+          border: 2px solid ${INK};
+          box-shadow: 3px 3px 0 0 ${INK};
+          transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        .stamp-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 ${INK}; }
+        .stamp-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0 0 ${INK}; }
+        @keyframes menuDrop {
+          from { opacity: 0; transform: translateY(-6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .menu-drop { animation: menuDrop 0.22s ease forwards; }
+        .menu-item-in { opacity: 0; animation: menuDrop 0.28s ease forwards; }
+      `}</style>
+
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-            <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-500 shadow-sm shadow-indigo-200 group-hover:shadow-indigo-300 transition-shadow">
-              <BookOpen className="w-5 h-5 text-white" />
+            <span
+              className="relative flex items-center justify-center w-9 h-9 rounded-full shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5"
+              style={{ border: `2px solid ${INK}`, backgroundColor: PAPER, boxShadow: `2px 2px 0 0 ${INK}` }}
+            >
+              <span className="brand-font text-[16px] leading-none" style={{ color: INK, fontWeight: 700 }}>
+                E
+              </span>
             </span>
-            <span className="text-xl font-extrabold tracking-tight text-gray-900">Erkinov</span>
+            <span className="flex flex-col leading-none">
+              <span className="brand-font text-[19px] font-semibold tracking-tight" style={{ color: INK }}>
+                Erkinov
+              </span>
+              <span
+                className="text-[10px] font-semibold tracking-[0.16em] uppercase mt-0.5"
+                style={{ color: TEAL }}
+              >
+                O'quv markazi
+              </span>
+            </span>
           </Link>
 
           {/* Desktop nav */}
@@ -46,21 +106,43 @@ export function Header() {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`relative flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    active ? 'text-indigo-700 bg-indigo-50' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
-                  }`}
+                  className="relative flex items-center gap-1.5 px-3.5 py-2 rounded-md text-[14.5px] font-semibold transition-colors duration-150"
+                  style={{
+                    color: active ? PAPER : `${INK}B3`,
+                    backgroundColor: active ? INK : 'transparent',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!active) e.currentTarget.style.backgroundColor = TINT;
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!active) e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
                 >
-                  {Icon && <Icon className="w-4 h-4" />}
+                  {Icon && <Icon className="w-4 h-4" strokeWidth={2.25} />}
                   {item.label}
+                  {item.badge && (
+                    <span
+                      className="inline-block w-[7px] h-[7px] rounded-[2px]"
+                      style={{ backgroundColor: active ? AMBER : AMBER, transform: 'rotate(8deg)' }}
+                    />
+                  )}
                 </Link>
               );
             })}
             {user && (
               <Link
                 to="/profile"
-                className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive('/profile') ? 'text-indigo-700 bg-indigo-50' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
-                }`}
+                className="px-3.5 py-2 rounded-md text-[14.5px] font-semibold transition-colors duration-150"
+                style={{
+                  color: isActive('/profile') ? PAPER : `${INK}B3`,
+                  backgroundColor: isActive('/profile') ? INK : 'transparent',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive('/profile')) e.currentTarget.style.backgroundColor = TINT;
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive('/profile')) e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 Profil
               </Link>
@@ -69,18 +151,34 @@ export function Header() {
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2.5">
               {user ? (
                 <>
                   <Link to="/profile">
-                    <Button variant="ghost" className="gap-2 rounded-full pl-1.5 pr-3">
-                      <span className="flex items-center justify-center w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold">
+                    <Button variant="ghost" className="gap-2 rounded-md pl-1.5 pr-3 hover:bg-transparent" style={{ color: INK }}>
+                      <span
+                        className="flex items-center justify-center w-7 h-7 rounded-full brand-font text-[12px] font-bold"
+                        style={{ border: `1.5px solid ${INK}`, color: INK, backgroundColor: PAPER }}
+                      >
                         {initials || <User className="w-3.5 h-3.5" />}
                       </span>
-                      {user.name}
+                      <span className="font-medium">{user.name}</span>
                     </Button>
                   </Link>
-                  <Button variant="outline" onClick={logout} className="gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={logout}
+                    className="gap-2 rounded-md border-[1.5px] transition-colors"
+                    style={{ borderColor: LINE, color: `${INK}B3` }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = INK;
+                      e.currentTarget.style.color = INK;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = LINE;
+                      e.currentTarget.style.color = `${INK}B3`;
+                    }}
+                  >
                     <LogOut className="w-4 h-4" />
                     Chiqish
                   </Button>
@@ -88,10 +186,21 @@ export function Header() {
               ) : (
                 <>
                   <Link to="/login">
-                    <Button variant="outline">Kirish</Button>
+                    <button
+                      className="text-[14.5px] font-semibold px-2 py-2 underline-offset-4 hover:underline transition-all"
+                      style={{ color: INK }}
+                    >
+                      Kirish
+                    </button>
                   </Link>
                   <Link to="/register">
-                    <Button className="bg-indigo-600 hover:bg-indigo-700 shadow-sm shadow-indigo-200">Ro'yxatdan o'tish</Button>
+                    <button
+                      className="stamp-btn rounded-md flex items-center gap-1.5 px-4 py-2 text-[14.5px] font-semibold"
+                      style={{ backgroundColor: INK, color: PAPER }}
+                    >
+                      Ro'yxatdan o'tish
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
                   </Link>
                 </>
               )}
@@ -100,61 +209,101 @@ export function Header() {
             {/* Mobile menu toggle */}
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+              className="md:hidden relative flex items-center justify-center w-9 h-9 rounded-md"
+              style={{ border: `1.5px solid ${INK}` }}
               aria-label={menuOpen ? 'Menyuni yopish' : 'Menyuni ochish'}
             >
-              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <Menu
+                className="w-4.5 h-4.5 absolute transition-all duration-150"
+                style={{ color: INK, opacity: menuOpen ? 0 : 1, transform: menuOpen ? 'rotate(90deg)' : 'rotate(0)' }}
+              />
+              <X
+                className="w-4.5 h-4.5 absolute transition-all duration-150"
+                style={{ color: INK, opacity: menuOpen ? 1 : 0, transform: menuOpen ? 'rotate(0)' : 'rotate(-90deg)' }}
+              />
             </button>
           </div>
         </div>
 
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden border-t border-gray-100 py-3 space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.to);
-              return (
+          <div
+            className="md:hidden menu-drop overflow-hidden pb-3"
+            style={{ borderTop: `1px dashed ${LINE}` }}
+          >
+            <div className="pt-2">
+              {navItems.map((item, i) => {
+                const Icon = item.icon;
+                const active = isActive(item.to);
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => setMenuOpen(false)}
+                    style={{
+                      animationDelay: `${i * 40}ms`,
+                      color: active ? PAPER : `${INK}CC`,
+                      backgroundColor: active ? INK : 'transparent',
+                      borderBottom: i < navItems.length - 1 ? `1px dashed ${LINE}` : 'none',
+                    }}
+                    className="menu-item-in flex items-center gap-2 px-3 py-3 rounded-md text-[15px] font-semibold"
+                  >
+                    {Icon && <Icon className="w-4 h-4" />}
+                    {item.label}
+                    {item.badge && (
+                      <span className="w-[7px] h-[7px] rounded-[2px] ml-auto" style={{ backgroundColor: AMBER }} />
+                    )}
+                  </Link>
+                );
+              })}
+              {user && (
                 <Link
-                  key={item.to}
-                  to={item.to}
+                  to="/profile"
                   onClick={() => setMenuOpen(false)}
-                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium ${
-                    active ? 'text-indigo-700 bg-indigo-50' : 'text-gray-600 hover:bg-gray-50'
-                  }`}
+                  style={{
+                    animationDelay: `${navItems.length * 40}ms`,
+                    color: isActive('/profile') ? PAPER : `${INK}CC`,
+                    backgroundColor: isActive('/profile') ? INK : 'transparent',
+                  }}
+                  className="menu-item-in flex items-center gap-2 px-3 py-3 rounded-md text-[15px] font-semibold"
                 >
-                  {Icon && <Icon className="w-4 h-4" />}
-                  {item.label}
+                  <span
+                    className="flex items-center justify-center w-5 h-5 rounded-full brand-font text-[10px] font-bold"
+                    style={{ border: `1px solid currentColor` }}
+                  >
+                    {initials || <User className="w-3 h-3" />}
+                  </span>
+                  {user.name}
                 </Link>
-              );
-            })}
-            {user && (
-              <Link
-                to="/profile"
-                onClick={() => setMenuOpen(false)}
-                className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium ${
-                  isActive('/profile') ? 'text-indigo-700 bg-indigo-50' : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold">
-                  {initials || <User className="w-3 h-3" />}
-                </span>
-                {user.name}
-              </Link>
-            )}
-            <div className="pt-2 flex gap-2 px-1">
+              )}
+            </div>
+
+            <div className="menu-item-in flex gap-2 px-1 pt-2" style={{ animationDelay: `${(navItems.length + 1) * 40}ms` }}>
               {user ? (
-                <Button variant="outline" onClick={logout} className="gap-2 w-full">
+                <Button
+                  variant="outline"
+                  onClick={logout}
+                  className="gap-2 w-full rounded-md border-[1.5px]"
+                  style={{ borderColor: LINE, color: `${INK}B3` }}
+                >
                   <LogOut className="w-4 h-4" />
                   Chiqish
                 </Button>
               ) : (
                 <>
                   <Link to="/login" className="flex-1" onClick={() => setMenuOpen(false)}>
-                    <Button variant="outline" className="w-full">Kirish</Button>
+                    <button className="w-full text-[14.5px] font-semibold py-2.5 rounded-md" style={{ border: `1.5px solid ${LINE}`, color: INK }}>
+                      Kirish
+                    </button>
                   </Link>
                   <Link to="/register" className="flex-1" onClick={() => setMenuOpen(false)}>
-                    <Button className="w-full bg-indigo-600 hover:bg-indigo-700">Ro'yxatdan o'tish</Button>
+                    <button
+                      className="stamp-btn w-full rounded-md flex items-center justify-center gap-1.5 py-2.5 text-[14.5px] font-semibold"
+                      style={{ backgroundColor: INK, color: PAPER }}
+                    >
+                      Ro'yxatdan o'tish
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
                   </Link>
                 </>
               )}

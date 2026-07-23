@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { Header } from '../components/Header';
+import { useAuth } from '../context/AuthContext';
 import { mockCourses } from '../data/mockData';
 import {
   Code,
@@ -19,6 +20,81 @@ import {
   CheckCircle,
   Clock,
 } from 'lucide-react';
+
+/* ─── Terminal boot / welcome sequence ──────────────────────────────── */
+function TerminalBoot({ userName, onDone }: { userName?: string; onDone: () => void }) {
+  const lines = [
+    'erkinov@platform:~$ init --load-modules',
+    'Modullar yuklanmoqda ████████████████ 100%',
+    'erkinov@platform:~$ auth --verify-session',
+    userName ? `✓ Xush kelibsiz, ${userName}!` : "✓ Xush kelibsiz, mehmon!",
+    'erkinov@platform:~$ open ./home',
+  ];
+  const [displayed, setDisplayed] = useState<string[]>([]);
+  const [lineIdx, setLineIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+  const skippedRef = useRef(false);
+
+  useEffect(() => {
+    if (lineIdx >= lines.length) {
+      const t = setTimeout(onDone, 550);
+      return () => clearTimeout(t);
+    }
+    const current = lines[lineIdx];
+    if (charIdx <= current.length) {
+      const t = setTimeout(() => {
+        setDisplayed((prev) => {
+          const copy = [...prev];
+          copy[lineIdx] = current.slice(0, charIdx);
+          return copy;
+        });
+        setCharIdx((c) => c + 1);
+      }, current.includes('█') ? 6 : 16);
+      return () => clearTimeout(t);
+    } else {
+      const t = setTimeout(() => {
+        setLineIdx((i) => i + 1);
+        setCharIdx(0);
+      }, 260);
+      return () => clearTimeout(t);
+    }
+  }, [charIdx, lineIdx]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const skip = () => {
+    if (skippedRef.current) return;
+    skippedRef.current = true;
+    setDisplayed(lines);
+    setLineIdx(lines.length);
+  };
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') skip();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  return (
+    <div className="terminal-window" onClick={skip} role="button" aria-label="O'tkazib yuborish">
+      <div className="terminal-titlebar">
+        <span className="t-dot t-red" />
+        <span className="t-dot t-yellow" />
+        <span className="t-dot t-green" />
+        <span className="terminal-path">erkinov — zsh</span>
+      </div>
+      <div className="terminal-body">
+        {displayed.map((l, i) => (
+          <div key={i} className={`terminal-line ${l.startsWith('✓') ? 'ok' : ''}`}>
+            {l}
+          </div>
+        ))}
+        <span className="terminal-cursor" />
+      </div>
+      <div className="terminal-hint">bosing yoki Enter — o'tkazib yuborish</div>
+    </div>
+  );
+}
 
 /* ─── Animated counter ──────────────────────────────────────────────── */
 function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
@@ -44,8 +120,26 @@ function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
 
 /* ─── Main component ────────────────────────────────────────────────── */
 export function Home() {
+  const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [mounted, setMounted] = useState(false);
+
+  const [showIntro, setShowIntro] = useState(() => {
+    try {
+      return typeof window !== 'undefined' && !sessionStorage.getItem('erkinov_intro_shown');
+    } catch {
+      return true;
+    }
+  });
+  const [introFading, setIntroFading] = useState(false);
+
+  const handleIntroDone = () => {
+    setIntroFading(true);
+    setTimeout(() => {
+      setShowIntro(false);
+      try { sessionStorage.setItem('erkinov_intro_shown', '1'); } catch {}
+    }, 420);
+  };
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 100);
@@ -129,6 +223,90 @@ export function Home() {
           overflow-x: hidden;
         }
 
+        /* ========== TERMINAL BOOT ========== */
+        .terminal-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          background: radial-gradient(ellipse at center, #0d1424 0%, #05070d 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          transition: opacity 0.4s ease;
+        }
+        .terminal-overlay.fade-out {
+          opacity: 0;
+          pointer-events: none;
+        }
+        .terminal-window {
+          width: min(560px, 100%);
+          background: #0b1120;
+          border: 1px solid rgba(56, 189, 248, 0.25);
+          border-radius: 14px;
+          box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 30px 80px -20px rgba(37, 99, 235, 0.35);
+          overflow: hidden;
+          cursor: pointer;
+          animation: bootIn 0.4s ease;
+        }
+        @keyframes bootIn {
+          from { opacity: 0; transform: scale(0.97) translateY(6px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .terminal-titlebar {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          padding: 10px 14px;
+          background: #10182c;
+          border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .t-red { background: #FF5F57; }
+        .t-yellow { background: #FEBC2E; }
+        .t-green { background: #28C840; }
+        .terminal-path {
+          margin-left: 8px;
+          font-size: 11px;
+          color: #64748B;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        }
+        .terminal-body {
+          padding: 20px 18px 16px;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+          font-size: 13px;
+          line-height: 1.9;
+          min-height: 160px;
+        }
+        @media (max-width: 480px) {
+          .terminal-body { font-size: 11.5px; min-height: 140px; line-height: 1.8; }
+        }
+        .terminal-line {
+          color: #94A3B8;
+          white-space: pre-wrap;
+          word-break: break-word;
+        }
+        .terminal-line.ok {
+          color: #38BDF8;
+          font-weight: 600;
+        }
+        .terminal-cursor {
+          display: inline-block;
+          width: 7px;
+          height: 14px;
+          background: #38BDF8;
+          animation: blink 0.9s step-end infinite;
+          vertical-align: text-bottom;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+        .terminal-hint {
+          text-align: center;
+          font-size: 10px;
+          color: #475569;
+          padding: 0 14px 14px;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        }
+
         /* Container */
         .container {
           width: 100%;
@@ -170,6 +348,15 @@ export function Home() {
           font-weight: 600;
           text-transform: uppercase;
           margin-bottom: 20px;
+          max-width: 100%;
+        }
+        @media (max-width: 480px) {
+          .hero-eyebrow {
+            font-size: 10px;
+            padding: 6px 10px;
+            white-space: normal;
+            line-height: 1.4;
+          }
         }
 
         .hero-title {
@@ -189,7 +376,7 @@ export function Home() {
 
         @media (max-width: 480px) {
           .hero-title {
-            font-size: 28px;
+            font-size: 26px;
           }
         }
 
@@ -938,6 +1125,12 @@ export function Home() {
           }
         }
       `}</style>
+
+      {showIntro && (
+        <div className={`terminal-overlay ${introFading ? 'fade-out' : ''}`}>
+          <TerminalBoot userName={user?.name} onDone={handleIntroDone} />
+        </div>
+      )}
 
       <Header />
 
