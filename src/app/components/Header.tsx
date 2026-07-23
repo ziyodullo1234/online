@@ -34,7 +34,12 @@ export function Header() {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  const isActive = (path: string) => (path === '/' ? location.pathname === '/' : location.pathname.startsWith(path));
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
 
   const initials = user?.name
     ?.trim()
@@ -43,6 +48,12 @@ export function Header() {
     .slice(0, 2)
     .join('')
     .toUpperCase();
+
+  // Har doim bir xil ko'rinish uchun aktiv holatni tekshirish
+  const isHomeActive = location.pathname === '/';
+  const isCoursesActive = location.pathname.startsWith('/courses');
+  const isGamesActive = location.pathname.startsWith('/games');
+  const isProfileActive = location.pathname.startsWith('/profile');
 
   return (
     <header
@@ -97,51 +108,82 @@ export function Header() {
             </span>
           </Link>
 
-          {/* Desktop nav */}
+          {/* Desktop nav - BARCHA SAHIFALARDA BIR XIL */}
           <nav className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.to);
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className="relative flex items-center gap-1.5 px-3.5 py-2 rounded-md text-[14.5px] font-semibold transition-colors duration-150"
-                  style={{
-                    color: active ? PAPER : `${INK}B3`,
-                    backgroundColor: active ? INK : 'transparent',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!active) e.currentTarget.style.backgroundColor = TINT;
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!active) e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
-                >
-                  {Icon && <Icon className="w-4 h-4" strokeWidth={2.25} />}
-                  {item.label}
-                  {item.badge && (
-                    <span
-                      className="inline-block w-[7px] h-[7px] rounded-[2px]"
-                      style={{ backgroundColor: active ? AMBER : AMBER, transform: 'rotate(8deg)' }}
-                    />
-                  )}
-                </Link>
-              );
-            })}
+            {/* Bosh sahifa */}
+            <Link
+              to="/"
+              className="relative flex items-center gap-1.5 px-3.5 py-2 rounded-md text-[14.5px] font-semibold transition-colors duration-150"
+              style={{
+                color: isHomeActive ? PAPER : `${INK}B3`,
+                backgroundColor: isHomeActive ? INK : 'transparent',
+              }}
+              onMouseEnter={(e) => {
+                if (!isHomeActive) e.currentTarget.style.backgroundColor = TINT;
+              }}
+              onMouseLeave={(e) => {
+                if (!isHomeActive) e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              Bosh sahifa
+            </Link>
+
+            {/* Kurslar */}
+            <Link
+              to="/courses"
+              className="relative flex items-center gap-1.5 px-3.5 py-2 rounded-md text-[14.5px] font-semibold transition-colors duration-150"
+              style={{
+                color: isCoursesActive ? PAPER : `${INK}B3`,
+                backgroundColor: isCoursesActive ? INK : 'transparent',
+              }}
+              onMouseEnter={(e) => {
+                if (!isCoursesActive) e.currentTarget.style.backgroundColor = TINT;
+              }}
+              onMouseLeave={(e) => {
+                if (!isCoursesActive) e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              <BookOpen className="w-4 h-4" strokeWidth={2.25} />
+              Kurslar
+            </Link>
+
+            {/* O'yinlar */}
+            <Link
+              to="/games"
+              className="relative flex items-center gap-1.5 px-3.5 py-2 rounded-md text-[14.5px] font-semibold transition-colors duration-150"
+              style={{
+                color: isGamesActive ? PAPER : `${INK}B3`,
+                backgroundColor: isGamesActive ? INK : 'transparent',
+              }}
+              onMouseEnter={(e) => {
+                if (!isGamesActive) e.currentTarget.style.backgroundColor = TINT;
+              }}
+              onMouseLeave={(e) => {
+                if (!isGamesActive) e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              <Gamepad2 className="w-4 h-4" strokeWidth={2.25} />
+              O'yinlar
+              <span
+                className="inline-block w-[7px] h-[7px] rounded-[2px]"
+                style={{ backgroundColor: isGamesActive ? AMBER : AMBER, transform: 'rotate(8deg)' }}
+              />
+            </Link>
+
+            {/* Profil - faqat login qilganlar uchun */}
             {user && (
               <Link
                 to="/profile"
                 className="px-3.5 py-2 rounded-md text-[14.5px] font-semibold transition-colors duration-150"
                 style={{
-                  color: isActive('/profile') ? PAPER : `${INK}B3`,
-                  backgroundColor: isActive('/profile') ? INK : 'transparent',
+                  color: isProfileActive ? PAPER : `${INK}B3`,
+                  backgroundColor: isProfileActive ? INK : 'transparent',
                 }}
                 onMouseEnter={(e) => {
-                  if (!isActive('/profile')) e.currentTarget.style.backgroundColor = TINT;
+                  if (!isProfileActive) e.currentTarget.style.backgroundColor = TINT;
                 }}
                 onMouseLeave={(e) => {
-                  if (!isActive('/profile')) e.currentTarget.style.backgroundColor = 'transparent';
+                  if (!isProfileActive) e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
                 Profil
@@ -232,38 +274,59 @@ export function Header() {
             style={{ borderTop: `1px dashed ${LINE}` }}
           >
             <div className="pt-2">
-              {navItems.map((item, i) => {
-                const Icon = item.icon;
-                const active = isActive(item.to);
-                return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    onClick={() => setMenuOpen(false)}
-                    style={{
-                      animationDelay: `${i * 40}ms`,
-                      color: active ? PAPER : `${INK}CC`,
-                      backgroundColor: active ? INK : 'transparent',
-                      borderBottom: i < navItems.length - 1 ? `1px dashed ${LINE}` : 'none',
-                    }}
-                    className="menu-item-in flex items-center gap-2 px-3 py-3 rounded-md text-[15px] font-semibold"
-                  >
-                    {Icon && <Icon className="w-4 h-4" />}
-                    {item.label}
-                    {item.badge && (
-                      <span className="w-[7px] h-[7px] rounded-[2px] ml-auto" style={{ backgroundColor: AMBER }} />
-                    )}
-                  </Link>
-                );
-              })}
+              {/* Bosh sahifa */}
+              <Link
+                to="/"
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  color: isHomeActive ? PAPER : `${INK}CC`,
+                  backgroundColor: isHomeActive ? INK : 'transparent',
+                  borderBottom: `1px dashed ${LINE}`,
+                }}
+                className="menu-item-in flex items-center gap-2 px-3 py-3 rounded-md text-[15px] font-semibold"
+              >
+                Bosh sahifa
+              </Link>
+
+              {/* Kurslar */}
+              <Link
+                to="/courses"
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  color: isCoursesActive ? PAPER : `${INK}CC`,
+                  backgroundColor: isCoursesActive ? INK : 'transparent',
+                  borderBottom: `1px dashed ${LINE}`,
+                }}
+                className="menu-item-in flex items-center gap-2 px-3 py-3 rounded-md text-[15px] font-semibold"
+              >
+                <BookOpen className="w-4 h-4" />
+                Kurslar
+              </Link>
+
+              {/* O'yinlar */}
+              <Link
+                to="/games"
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  color: isGamesActive ? PAPER : `${INK}CC`,
+                  backgroundColor: isGamesActive ? INK : 'transparent',
+                  borderBottom: `1px dashed ${LINE}`,
+                }}
+                className="menu-item-in flex items-center gap-2 px-3 py-3 rounded-md text-[15px] font-semibold"
+              >
+                <Gamepad2 className="w-4 h-4" />
+                O'yinlar
+                <span className="w-[7px] h-[7px] rounded-[2px] ml-auto" style={{ backgroundColor: AMBER }} />
+              </Link>
+
+              {/* Profil */}
               {user && (
                 <Link
                   to="/profile"
                   onClick={() => setMenuOpen(false)}
                   style={{
-                    animationDelay: `${navItems.length * 40}ms`,
-                    color: isActive('/profile') ? PAPER : `${INK}CC`,
-                    backgroundColor: isActive('/profile') ? INK : 'transparent',
+                    color: isProfileActive ? PAPER : `${INK}CC`,
+                    backgroundColor: isProfileActive ? INK : 'transparent',
                   }}
                   className="menu-item-in flex items-center gap-2 px-3 py-3 rounded-md text-[15px] font-semibold"
                 >
@@ -278,7 +341,7 @@ export function Header() {
               )}
             </div>
 
-            <div className="menu-item-in flex gap-2 px-1 pt-2" style={{ animationDelay: `${(navItems.length + 1) * 40}ms` }}>
+            <div className="menu-item-in flex gap-2 px-1 pt-2">
               {user ? (
                 <Button
                   variant="outline"

